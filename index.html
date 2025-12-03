@@ -40,7 +40,6 @@
       opacity: 0.9;
       user-select: none;
     }
-
     .info-icon:hover { opacity: 1; }
 
     .info-icon.show-close::after {
@@ -145,11 +144,6 @@
       border-radius: 999px;
     }
 
-    /* Faust immer richtig gedreht (Daumen oben rechts) */
-    .smiley-hand.fist {
-      transform: rotate(-90deg) !important;
-    }
-
     .card-message {
       font-size: 1.25rem;
       font-weight: 700;
@@ -172,7 +166,12 @@
 
     .rules-text h2 {
       font-size: 1.05rem;
-      margin: 0 0 4px;
+      margin: 0 0 6px;
+    }
+
+    .rules-text h3 {
+      font-size: 0.98rem;
+      margin: 10px 0 4px;
     }
 
     .rules-text p { margin: 4px 0; }
@@ -180,6 +179,19 @@
     .rules-separator {
       margin: 8px 0;
       border-top: 1px solid rgba(148,163,184,0.4);
+    }
+
+    .win-title {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #facc15;
+      text-shadow: 2px 2px 0 black;
+      margin-top: -10px;
+    }
+
+    .win-sub {
+      font-size: 1rem;
+      margin-top: 4px;
     }
 
     .buttons-row {
@@ -201,11 +213,6 @@
     .btn-primary { background: #10b981; color: #022c22; }
     .btn-secondary { background: #f59e0b; color: #451a03; }
 
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-
     .score-area {
       margin-top: 6px;
       padding: 20px 14px 22px;
@@ -219,7 +226,13 @@
       font-size: 3.4rem;
       font-weight: 900;
       color: #e5ff4a;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+    }
+
+    .moves-label {
+      margin-top: 4px;
+      font-size: 0.95rem;
+      color: #e5e7eb;
     }
 
     .start-row {
@@ -311,6 +324,7 @@
       color: #451a03;
     }
 
+    /* Menü */
     .menu-box {
       background: #0f172a;
       padding: 22px 18px;
@@ -356,6 +370,7 @@
 
     .menu-close-btn:hover { background: #dc2626; }
 
+    /* Hand-Auswahl-Overlay */
     .hand-overlay {
       position: fixed;
       inset: 0;
@@ -425,20 +440,8 @@
       cursor: pointer;
     }
 
-    .hand-confirm { background: #22c55e; color: #022c22; }
-    .hand-reset  { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
-
-    .zug-counter {
-      margin-top: 8px;
-      font-size: 0.95rem;
-    }
-
-    .kippstopp-text {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #facc15;
-      text-shadow: 2px 2px 0 black;
-    }
+    .hand-confirm  { background: #22c55e; color: #022c22; }
+    .hand-reset    { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
   </style>
 </head>
 
@@ -506,7 +509,7 @@
       </div>
       <div class="hand-buttons">
         <button class="hand-confirm" id="handConfirm">Hand bestätigen</button>
-        <button class="hand-reset"  id="handReset">zurücksetzen</button>
+        <button class="hand-reset" id="handReset">zurücksetzen</button>
       </div>
     </div>
   </div>
@@ -527,11 +530,27 @@
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
+        <!-- Scrollbare Spielanleitung -->
         <div class="rules-container" id="rulesContainer">
           <div class="rules-text">
+
             <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
             <div class="rules-separator"></div>
-            <p>Hier kommt später die vollständige scrollbare Spielanleitung hinein.</p>
+
+            <h3>1. Rahmen auflegen</h3>
+            <p>Lege den Handrahmen locker auf den oberen Rand der KIPP-Box auf.
+               Die Ausrichtung ist egal – du kannst den Rahmen beliebig gedreht
+               auflegen.</p>
+
+            <div class="rules-separator"></div>
+
+            <h3>2. Kugel und KIPP-Würfel einlegen</h3>
+            <p>Lege die Kugel in das Loch des Boxbodens und setze den
+               KIPP-Würfel mit der abgeschrägten Kante an der Kugel anliegend
+               in eine beliebige Ecke der Box.</p>
+
+            <!-- Weitere Schritte fügst du später hier an. -->
+
           </div>
         </div>
 
@@ -540,18 +559,16 @@
   </div>
 
   <div class="buttons-row">
-    <button class="btn btn-primary"   id="btnOwn">erkippt</button>
+    <button class="btn btn-primary" id="btnOwn">erkippt</button>
     <button class="btn btn-secondary" id="btnFail">nicht erkippt</button>
   </div>
 
   <div class="score-area">
     <div class="score-big" id="pointsDisplay">0</div>
+    <div class="moves-label" id="movesDisplay">Züge: 0/6</div>
     <div class="start-row">
       <button class="start-btn start-btn-start" id="btnStart">starten</button>
       <button class="start-btn start-btn-close" id="btnClose">schließen</button>
-    </div>
-    <div class="zug-counter">
-      Züge: <span id="zugCount">0</span>/6
     </div>
   </div>
 
@@ -563,7 +580,11 @@ const faces = ["😉","😵‍💫","😁","😊","😠","😂","😍","😲","�
 const hands = ["🖐","🤞","🤟","👊"];
 
 let points = 0;
+let moves = 0;
+const MAX_MOVES = 6;
+
 let gameStarted = false;
+let gameWon = false;
 let rulesVisible = false;
 
 let selectedHand = null;
@@ -573,10 +594,6 @@ let headClicked = false;
 let handClicked = false;
 let currentFace = null;
 
-let zugCount = 0;
-const MAX_ZUEGE = 6;
-let kippStoppActive = false;
-
 /* DOM-Elemente */
 const faceEl = document.getElementById("smileyFace");
 const handEl = document.getElementById("smileyHand");
@@ -584,9 +601,9 @@ const comboRow = document.getElementById("comboRow");
 const cardMessage = document.getElementById("cardMessage");
 const rulesContainer = document.getElementById("rulesContainer");
 const pointsDisplay = document.getElementById("pointsDisplay");
+const movesDisplay = document.getElementById("movesDisplay");
 const btnStart = document.getElementById("btnStart");
 const infoIcon = document.getElementById("infoIcon");
-const zugCountEl = document.getElementById("zugCount");
 
 const resetOverlay = document.getElementById("resetOverlay");
 const resetCancel = document.getElementById("resetCancel");
@@ -626,24 +643,18 @@ function clearSelectionFlags() {
 
 function applyFistRotationToElement(el) {
   if (el.textContent === "👊") {
-    el.classList.add("fist");
+    el.style.transform = "rotate(90deg)";
   } else {
-    el.classList.remove("fist");
+    el.style.transform = "none";
   }
 }
 
-function setKippStopp() {
-  kippStoppActive = true;
-  comboRow.style.display = "none";
-  cardMessage.style.display = "block";
-  cardMessage.innerHTML = '<span class="kippstopp-text">KIPP STOPP</span>';
-  document.getElementById("btnOwn").disabled = true;
-  document.getElementById("btnFail").disabled = true;
+function updateMovesDisplay() {
+  movesDisplay.textContent = `Züge: ${moves}/${MAX_MOVES}`;
 }
 
-/* Neue KIPP-Vorgabe */
 function newCombo(){
-  if(!gameStarted || kippStoppActive) return;
+  if(!gameStarted || gameWon) return;
 
   currentFace = faces[randomInt(faces.length)];
   faceEl.textContent = currentFace;
@@ -658,24 +669,37 @@ function newCombo(){
   cardMessage.style.display = "block";
 }
 
+function showWinScreen(){
+  gameWon = true;
+  comboRow.style.display = "flex";
+  handEl.style.display = "none";
+  handEl.style.transform = "none";
+  faceEl.textContent = "🤓";
+  faceEl.style.fontSize = "6rem";
+  clearSelectionFlags();
+  cardMessage.innerHTML =
+    `<div class="win-title">GEWONNEN</div>
+     <div class="win-sub">15-Punktegrenze erfolgreich überschritten.</div>`;
+}
+
+function showKippStopp() {
+  cardMessage.innerHTML = "<strong>KIPP STOPP</strong><br>Du hast alle 6 Züge dieser Runde gespielt.";
+}
+
 /* Glückspunkt: Kopf & Hand angeklickt */
 function checkLuckPoint() {
-  if (!gameStarted || kippStoppActive || rulesVisible) return;
+  if (!gameStarted || gameWon || rulesVisible) return;
+  if (moves >= MAX_MOVES) return;
 
   if (headClicked && handClicked) {
     points += 1;
     pointsDisplay.textContent = points;
     clearSelectionFlags();
-    newCombo();   // neue KIPP-Vorgabe, Zug läuft weiter
-  }
-}
-
-/* Zugende: erkippt / nicht erkippt */
-function endZug() {
-  zugCount++;
-  zugCountEl.textContent = zugCount;
-  if (zugCount >= MAX_ZUEGE) {
-    setKippStopp();
+    if (points >= 16) {
+      showWinScreen();
+      return;
+    }
+    newCombo();
   }
 }
 
@@ -685,7 +709,7 @@ handOptions.forEach(btn => {
   const handChar = symbolSpan.textContent;
 
   if (handChar === "👊") {
-    symbolSpan.style.transform = "rotate(-90deg)";
+    symbolSpan.style.transform = "rotate(90deg)";
   }
 
   btn.onclick = () => {
@@ -710,11 +734,11 @@ handReset.onclick = () => {
 /* Start-Logik */
 function startGame() {
   gameStarted = true;
+  gameWon = false;
   points = 0;
-  kippStoppActive = false;
-  zugCount = 0;
-  zugCountEl.textContent = "0";
+  moves = 0;
   pointsDisplay.textContent = "0";
+  updateMovesDisplay();
   cardMessage.innerHTML = "";
   comboRow.style.display = "flex";
   handEl.style.display = "inline-block";
@@ -724,8 +748,6 @@ function startGame() {
   newCombo();
   btnStart.textContent = "Reset";
   btnStart.classList.add("reset-mode");
-  document.getElementById("btnOwn").disabled = false;
-  document.getElementById("btnFail").disabled = false;
 }
 
 btnStart.onclick = () => {
@@ -749,12 +771,12 @@ resetCancel.onclick = () => {
 
 resetConfirm.onclick = () => {
   resetOverlay.style.display = "none";
+  gameWon = false;
   gameStarted = false;
-  kippStoppActive = false;
   points = 0;
-  zugCount = 0;
-  zugCountEl.textContent = "0";
+  moves = 0;
   pointsDisplay.textContent = "0";
+  updateMovesDisplay();
   handEl.style.display = "inline-block";
   handEl.style.transform = "none";
   faceEl.textContent = "😀";
@@ -766,8 +788,9 @@ resetConfirm.onclick = () => {
   comboRow.style.display = "none";
   btnStart.textContent = "starten";
   btnStart.classList.remove("reset-mode");
-  document.getElementById("btnOwn").disabled = false;
-  document.getElementById("btnFail").disabled = false;
+  selectedHand = null;
+  tempSelectedHand = null;
+  handOptions.forEach(b => b.classList.remove("active"));
 };
 
 /* schließen-Button */
@@ -777,14 +800,16 @@ document.getElementById("btnClose").onclick = () => {
 
 /* Kopf / Hand anklickbar machen */
 faceEl.onclick = () => {
-  if(!gameStarted || kippStoppActive || rulesVisible) return;
+  if(!gameStarted || gameWon || rulesVisible) return;
+  if (moves >= MAX_MOVES) return;
   headClicked = !headClicked;
   faceEl.classList.toggle("selected", headClicked);
   checkLuckPoint();
 };
 
 handEl.onclick = () => {
-  if(!gameStarted || kippStoppActive || rulesVisible) return;
+  if(!gameStarted || gameWon || rulesVisible) return;
+  if (moves >= MAX_MOVES) return;
   handClicked = !handClicked;
   handEl.classList.toggle("selected", handClicked);
   checkLuckPoint();
@@ -792,7 +817,11 @@ handEl.onclick = () => {
 
 /* Buttons: erkippt / nicht erkippt */
 document.getElementById("btnOwn").onclick = () => {
-  if(!gameStarted || kippStoppActive || rulesVisible) return;
+  if(!gameStarted || gameWon || rulesVisible) return;
+  if (moves >= MAX_MOVES) return;
+
+  moves++;
+  updateMovesDisplay();
 
   if (headClicked) {
     points += 3;
@@ -801,14 +830,30 @@ document.getElementById("btnOwn").onclick = () => {
   }
   pointsDisplay.textContent = points;
   clearSelectionFlags();
-  endZug();
-  if (!kippStoppActive) newCombo();
+
+  if(points >= 16){
+    showWinScreen();
+    return;
+  }
+
+  if (moves >= MAX_MOVES) {
+    showKippStopp();
+  } else {
+    newCombo();
+  }
 };
 
 document.getElementById("btnFail").onclick = () => {
-  if(!gameStarted || kippStoppActive || rulesVisible) return;
+  if(!gameStarted || gameWon || rulesVisible) return;
+  if (moves >= MAX_MOVES) return;
+
+  moves++;
+  updateMovesDisplay();
   clearSelectionFlags();
-  endZug();
+
+  if (moves >= MAX_MOVES) {
+    showKippStopp();
+  }
 };
 
 /* Spielanleitung im Kombifeld ein-/ausblenden */
@@ -824,12 +869,10 @@ infoIcon.onclick = () => {
     infoIcon.classList.remove("show-close");
     rulesContainer.style.display = "none";
 
-    if(gameStarted && !kippStoppActive){
+    if(gameStarted){
       cardMessage.innerHTML = "";
       cardMessage.style.display = "block";
       comboRow.style.display = "flex";
-    } else if (kippStoppActive) {
-      setKippStopp();
     } else {
       cardMessage.innerHTML =
         "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
