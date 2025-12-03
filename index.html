@@ -30,7 +30,6 @@
       z-index: 30;
     }
 
-    /* 📙 Icon für Spielanleitung */
     .info-icon {
       position: absolute;
       top: 62px;
@@ -42,9 +41,7 @@
       user-select: none;
     }
 
-    .info-icon:hover {
-      opacity: 1;
-    }
+    .info-icon:hover { opacity: 1; }
 
     .info-icon.show-close::after {
       content: "✖";
@@ -133,11 +130,19 @@
     .smiley-face {
       font-size: 5.2rem;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+      cursor: pointer;
     }
 
     .smiley-hand {
       font-size: 4.2rem;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+      cursor: pointer;
+    }
+
+    .smiley-face.selected,
+    .smiley-hand.selected {
+      outline: 3px solid #facc15;
+      border-radius: 999px;
     }
 
     .card-message {
@@ -176,16 +181,6 @@
       margin: 8px 0;
       border-top: 1px solid rgba(148,163,184,0.4);
     }
-
-    .rules-combo-example {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 6px 0 4px;
-    }
-
-    .rules-combo-example .rules-hand { font-size: 2.4rem; }
-    .rules-combo-example .rules-face { font-size: 2.8rem; }
 
     .win-title {
       font-size: 2.4rem;
@@ -354,9 +349,7 @@
       cursor: pointer;
     }
 
-    .menu-item:hover {
-      background: #334155;
-    }
+    .menu-item:hover { background: #334155; }
 
     .menu-close-btn {
       width: 100%;
@@ -370,89 +363,80 @@
       cursor: pointer;
     }
 
-    .menu-close-btn:hover {
-      background: #dc2626;
+    .menu-close-btn:hover { background: #dc2626; }
+
+    /* Hand-Auswahl-Overlay */
+    .hand-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 35;
     }
 
-    /* Hand-Auswahl */
-    .hand-select {
-      display: none;
-      width: 100%;
+    .hand-dialog {
+      background: #0f172a;
+      border-radius: 24px;
+      padding: 18px;
+      width: min(90vw, 360px);
+      border: 1px solid rgba(148,163,184,0.7);
+    }
+
+    .hand-dialog-title {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
       text-align: center;
     }
 
-    .hand-select-title {
-      font-size: 1rem;
-      margin-bottom: 6px;
-    }
-
-    /* → jetzt 2×2-Raster */
-    .hand-select-row {
+    .hand-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      justify-items: center;
-      margin-bottom: 10px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
     .hand-option {
-      font-size: 3.2rem;
-      padding: 8px 10px;
+      background: #111827;
       border-radius: 16px;
-      background: #1e293b;
-      cursor: pointer;
-      transition: 0.2s;
+      border: 2px solid transparent;
+      padding: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
+      cursor: pointer;
     }
 
-    .hand-option.selected {
-      background: #22c55e;
-      color: #022c22;
+    .hand-option .hand-symbol {
+      font-size: 2.6rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+      display: inline-block;
     }
 
-    .hand-option[data-hand="👊"] {
-      transform: rotate(-90deg);
+    .hand-option.active {
+      border-color: #22c55e;
+      background: #022c22;
     }
 
-    .hand-select-buttons {
+    .hand-buttons {
       display: flex;
       gap: 10px;
-      justify-content: center;
     }
 
-    .hand-confirm-btn,
-    .hand-clear-btn {
+    .hand-buttons button {
       flex: 1;
       border-radius: 14px;
-      padding: 9px 6px;
+      padding: 10px 6px;
       font-size: 0.95rem;
       font-weight: 700;
       border: none;
       cursor: pointer;
     }
 
-    .hand-confirm-btn {
-      background: #22c55e;
-      color: #022c22;
-      opacity: 0.6;
-    }
-
-    .hand-confirm-btn.enabled {
-      opacity: 1;
-    }
-
-    .hand-confirm-btn:disabled {
-      cursor: default;
-    }
-
-    .hand-clear-btn {
-      background: #111827;
-      color: #e5e7eb;
-      border: 1px solid #4b5563;
-    }
+    .hand-confirm { background: #22c55e; color: #022c22; }
+    .hand-reset { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
   </style>
 </head>
 
@@ -461,7 +445,6 @@
 <div class="app">
 
   <div class="hamburger" id="menuBtn">☰</div>
-
   <div class="info-icon" id="infoIcon">📙</div>
 
   <!-- Menü -->
@@ -487,6 +470,7 @@
     </div>
   </div>
 
+  <!-- Reset-Dialog -->
   <div class="reset-overlay" id="resetOverlay">
     <div class="reset-dialog">
       <p class="reset-title">Reset?</p>
@@ -496,6 +480,31 @@
       <div class="reset-buttons">
         <button class="reset-btn cancel" id="resetCancel">Nein</button>
         <button class="reset-btn confirm" id="resetConfirm">Ja</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hand-Auswahl -->
+  <div class="hand-overlay" id="handOverlay">
+    <div class="hand-dialog">
+      <p class="hand-dialog-title">Wähle deine Hand</p>
+      <div class="hand-grid">
+        <button class="hand-option" data-hand="🖐">
+          <span class="hand-symbol">🖐</span>
+        </button>
+        <button class="hand-option" data-hand="🤞">
+          <span class="hand-symbol">🤞</span>
+        </button>
+        <button class="hand-option" data-hand="🤟">
+          <span class="hand-symbol">🤟</span>
+        </button>
+        <button class="hand-option" data-hand="👊">
+          <span class="hand-symbol">👊</span>
+        </button>
+      </div>
+      <div class="hand-buttons">
+        <button class="hand-confirm" id="handConfirm">Hand bestätigen</button>
+        <button class="hand-reset" id="handReset">zurücksetzen</button>
       </div>
     </div>
   </div>
@@ -511,30 +520,17 @@
           <div class="smiley-face" id="smileyFace">😀</div>
         </div>
 
-        <!-- Hand-Auswahl -->
-        <div class="hand-select" id="handSelect">
-          <div class="hand-select-title">Wähle deine Hand:</div>
-          <div class="hand-select-row">
-            <div class="hand-option" data-hand="🖐">🖐</div>
-            <div class="hand-option" data-hand="🤞">🤞</div>
-            <div class="hand-option" data-hand="🤟">🤟</div>
-            <div class="hand-option" data-hand="👊">👊</div>
-          </div>
-          <div class="hand-select-buttons">
-            <button id="handConfirmBtn" class="hand-confirm-btn" disabled>Hand bestätigen</button>
-            <button id="handClearBtn" class="hand-clear-btn">zurücksetzen</button>
-          </div>
-        </div>
-
-        <!-- Starttext -->
         <div class="card-message" id="cardMessage">
           📙 = Scrollbare Spielanleitung.<br><br>
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
-        <!-- Scrollbare Spielanleitung (noch mit altem „aufgelegt“-Text, können wir später anpassen) -->
         <div class="rules-container" id="rulesContainer">
-          <!-- … unverändert gelassen … -->
+          <div class="rules-text">
+            <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
+            <div class="rules-separator"></div>
+            <p>Die ausführliche Spielanleitung kannst du hier später anpassen. Für den Test ist nur die Punktevergabe wichtig.</p>
+          </div>
         </div>
 
       </div>
@@ -543,8 +539,7 @@
 
   <div class="buttons-row">
     <button class="btn btn-primary" id="btnOwn">erkippt</button>
-    <!-- 👉 hier: Aufschrift geändert -->
-    <button class="btn btn-secondary" id="btnOther">Fehlkipp</button>
+    <button class="btn btn-secondary" id="btnFail">Nicht erkippt</button>
   </div>
 
   <div class="score-area">
@@ -558,6 +553,7 @@
 </div>
 
 <script>
+/* Grunddaten */
 const faces = ["😉","😵‍💫","😁","😊","😠","😂","😍","😲","😚","🙄","😬","🙂"];
 const hands = ["🖐","🤞","🤟","👊"];
 
@@ -567,9 +563,13 @@ let gameWon = false;
 let rulesVisible = false;
 
 let selectedHand = null;
-let handLocked = false;
-let lastFaceIndex = -1;
+let tempSelectedHand = null;
 
+let headClicked = false;
+let handClicked = false;
+let currentFace = null;
+
+/* DOM-Elemente */
 const faceEl = document.getElementById("smileyFace");
 const handEl = document.getElementById("smileyHand");
 const comboRow = document.getElementById("comboRow");
@@ -583,11 +583,12 @@ const resetOverlay = document.getElementById("resetOverlay");
 const resetCancel = document.getElementById("resetCancel");
 const resetConfirm = document.getElementById("resetConfirm");
 
-const handSelect = document.getElementById("handSelect");
+const handOverlay = document.getElementById("handOverlay");
 const handOptions = document.querySelectorAll(".hand-option");
-const handConfirmBtn = document.getElementById("handConfirmBtn");
-const handClearBtn = document.getElementById("handClearBtn");
+const handConfirm = document.getElementById("handConfirm");
+const handReset = document.getElementById("handReset");
 
+/* Menü-Button */
 document.getElementById("menuBtn").onclick = () =>
   document.getElementById("menuOverlay").style.display = "flex";
 
@@ -597,37 +598,43 @@ function closeMenu() {
 
 function openRulesScroll() {
   closeMenu();
-  if (!rulesVisible) {
-    infoIcon.click();
-  }
+  if (!rulesVisible) infoIcon.click();
 }
 
 function openRulesPdf() {
   window.open('KIPP_Smiley_Spielanleitung.PDF?v=2', '_blank');
 }
 
+/* Hilfsfunktionen */
 function randomInt(max){ return Math.floor(Math.random()*max); }
+
+function clearSelectionFlags() {
+  headClicked = false;
+  handClicked = false;
+  faceEl.classList.remove("selected");
+  handEl.classList.remove("selected");
+}
+
+function applyFistRotationToElement(el) {
+  if (el.textContent === "👊") {
+    el.style.transform = "rotate(90deg)";
+  } else {
+    el.style.transform = "none";
+  }
+}
 
 function newCombo(){
   if(!gameStarted || gameWon) return;
 
-  let idx;
-  do {
-    idx = randomInt(faces.length);
-  } while(idx === lastFaceIndex && faces.length > 1);
-  lastFaceIndex = idx;
-  faceEl.textContent = faces[idx];
+  currentFace = faces[randomInt(faces.length)];
+  faceEl.textContent = currentFace;
 
-  if(selectedHand){
-    handEl.textContent = selectedHand;
-    handEl.style.transform = (selectedHand === "👊") ? "rotate(-90deg)" : "none";
-  } else {
-    const randomHand = hands[randomInt(hands.length)];
-    selectedHand = randomHand;
-    handEl.textContent = randomHand;
-    handEl.style.transform = (randomHand === "👊") ? "rotate(-90deg)" : "none";
-  }
+  // Hand ist immer die gewählte Hand
+  const handSymbol = selectedHand || hands[randomInt(hands.length)];
+  handEl.textContent = handSymbol;
+  applyFistRotationToElement(handEl);
 
+  clearSelectionFlags();
   comboRow.style.display = "flex";
   cardMessage.innerHTML = "";
   cardMessage.style.display = "block";
@@ -640,98 +647,94 @@ function showWinScreen(){
   handEl.style.transform = "none";
   faceEl.textContent = "🤓";
   faceEl.style.fontSize = "6rem";
+  clearSelectionFlags();
   cardMessage.innerHTML =
     `<div class="win-title">GEWONNEN</div>
      <div class="win-sub">15-Punktegrenze erfolgreich überschritten.</div>`;
 }
 
-// Hand-Auswahl-Logik
-handOptions.forEach(opt => {
-  opt.addEventListener("click", () => {
-    if(handLocked) return;
-    handOptions.forEach(o => o.classList.remove("selected"));
-    opt.classList.add("selected");
-    selectedHand = opt.dataset.hand;
-    handConfirmBtn.disabled = false;
-    handConfirmBtn.classList.add("enabled");
-  });
+/* Glückspunkt prüfen: Kopf & Hand angeklickt */
+function checkLuckPoint() {
+  if (!gameStarted || gameWon || rulesVisible) return;
+
+  if (headClicked && handClicked) {
+    // Kopf & Hand vor dem Kippen komplett aufgelegt -> 1 Punkt + neue KIPP-Vorgabe
+    points += 1;
+    pointsDisplay.textContent = points;
+    if (points >= 16) {
+      showWinScreen();
+      return;
+    }
+    newCombo();
+  }
+}
+
+/* Hand-Auswahl-Overlay */
+handOptions.forEach(btn => {
+  const symbolSpan = btn.querySelector(".hand-symbol");
+  const handChar = symbolSpan.textContent;
+
+  if (handChar === "👊") {
+    symbolSpan.style.transform = "rotate(90deg)";
+  }
+
+  btn.onclick = () => {
+    tempSelectedHand = handChar;
+    handOptions.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  };
 });
 
-handClearBtn.onclick = () => {
-  if(handLocked) return;
-  selectedHand = null;
-  handOptions.forEach(o => o.classList.remove("selected"));
-  handConfirmBtn.disabled = true;
-  handConfirmBtn.classList.remove("enabled");
+handConfirm.onclick = () => {
+  if (!tempSelectedHand) return;
+  selectedHand = tempSelectedHand;
+  handOverlay.style.display = "none";
+  startGame();
 };
 
-handConfirmBtn.onclick = () => {
-  if(handLocked || !selectedHand) return;
-  handLocked = true;
-  handSelect.style.display = "none";
-  comboRow.style.display = "flex";
+handReset.onclick = () => {
+  tempSelectedHand = null;
+  handOptions.forEach(b => b.classList.remove("active"));
+};
+
+/* Start-Logik */
+function startGame() {
+  gameStarted = true;
+  gameWon = false;
+  points = 0;
+  pointsDisplay.textContent = "0";
   cardMessage.innerHTML = "";
-  cardMessage.style.display = "block";
+  comboRow.style.display = "flex";
+  handEl.style.display = "inline-block";
+  handEl.style.transform = "none";
+  faceEl.style.fontSize = "5.2rem";
+  clearSelectionFlags();
   newCombo();
-};
+  btnStart.textContent = "Reset";
+  btnStart.classList.add("reset-mode");
+}
 
-// Punkte-Logik (noch die „alte“ Version: erkippt +3, Fehlkipp +1)
-document.getElementById("btnOwn").onclick = () => {
-  if(!gameStarted || gameWon || rulesVisible) return;
-  points += 3;
-  pointsDisplay.textContent = points;
-  if(points >= 16) return showWinScreen();
-  newCombo();
-};
-
-document.getElementById("btnOther").onclick = () => {
-  if(!gameStarted || gameWon || rulesVisible) return;
-  points += 1;  // später ändern wir hier auf 0 Punkte & neue Logik
-  pointsDisplay.textContent = points;
-  if(points >= 16) return showWinScreen();
-  newCombo();
-};
-
-// Start / Reset
 btnStart.onclick = () => {
   if(rulesVisible) return;
 
   if(!gameStarted){
-    gameStarted = true;
-    gameWon = false;
-    points = 0;
-    pointsDisplay.textContent = "0";
-    selectedHand = null;
-    handLocked = false;
-    lastFaceIndex = -1;
-
-    faceEl.textContent = "😀";
-    faceEl.style.fontSize = "5.2rem";
-    handEl.style.display = "inline-block";
-    handEl.style.transform = "none";
-
-    handOptions.forEach(o => o.classList.remove("selected"));
-    handConfirmBtn.disabled = true;
-    handConfirmBtn.classList.remove("enabled");
-    handSelect.style.display = "block";
-
-    comboRow.style.display = "none";
-    cardMessage.innerHTML = "Bitte wähle deine Hand.";
-    cardMessage.style.display = "block";
-
-    btnStart.textContent = "Reset";
-    btnStart.classList.add("reset-mode");
+    // zuerst Hand wählen, falls noch keine gewählt
+    if(!selectedHand){
+      handOverlay.style.display = "flex";
+      return;
+    }
+    startGame();
   } else {
+    // Reset-Dialog anzeigen
     resetOverlay.style.display = "flex";
   }
 };
 
-// Reset-Dialog: Nein
+/* Reset-Dialog */
 resetCancel.onclick = () => {
   resetOverlay.style.display = "none";
 };
 
-// Reset-Dialog: Ja
 resetConfirm.onclick = () => {
   resetOverlay.style.display = "none";
   gameWon = false;
@@ -742,35 +745,68 @@ resetConfirm.onclick = () => {
   handEl.style.transform = "none";
   faceEl.textContent = "😀";
   faceEl.style.fontSize = "5.2rem";
+  clearSelectionFlags();
   cardMessage.innerHTML =
     "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
   cardMessage.style.display = "block";
   comboRow.style.display = "none";
   btnStart.textContent = "Start";
   btnStart.classList.remove("reset-mode");
-
-  selectedHand = null;
-  handLocked = false;
-  lastFaceIndex = -1;
-  handSelect.style.display = "none";
-  handOptions.forEach(o => o.classList.remove("selected"));
-  handConfirmBtn.disabled = true;
-  handConfirmBtn.classList.remove("enabled");
 };
 
-// schließen-Button
+/* schließen-Button */
 document.getElementById("btnClose").onclick = () => {
   if(window.confirm("App wirklich schließen?")) window.close();
 };
 
-// Spielanleitung im Kombifeld ein-/ausblenden
+/* Kopf / Hand anklickbar machen */
+faceEl.onclick = () => {
+  if(!gameStarted || gameWon || rulesVisible) return;
+  headClicked = !headClicked;
+  faceEl.classList.toggle("selected", headClicked);
+  checkLuckPoint();
+};
+
+handEl.onclick = () => {
+  if(!gameStarted || gameWon || rulesVisible) return;
+  handClicked = !handClicked;
+  handEl.classList.toggle("selected", handClicked);
+  checkLuckPoint();
+};
+
+/* Buttons: erkippt / Nicht erkippt */
+document.getElementById("btnOwn").onclick = () => {
+  if(!gameStarted || gameWon || rulesVisible) return;
+
+  // Sichtbarer Kopf -> 3 Punkte, sonst (verdeckter Kopf) -> 5 Punkte
+  if (headClicked) {
+    points += 3;
+  } else {
+    points += 5;
+  }
+  pointsDisplay.textContent = points;
+
+  if(points >= 16){
+    showWinScreen();
+    return;
+  }
+
+  newCombo();
+};
+
+document.getElementById("btnFail").onclick = () => {
+  if(!gameStarted || gameWon || rulesVisible) return;
+  // 0 Punkte, gleiche KIPP-Vorgabe bleibt, nur Klick-Status löschen
+  clearSelectionFlags();
+};
+
+/* Spielanleitung im Kombifeld ein-/ausblenden */
 infoIcon.onclick = () => {
   rulesVisible = !rulesVisible;
 
   if(rulesVisible){
     infoIcon.classList.add("show-close");
     comboRow.style.display = "none";
-    handSelect.style.display = "none";
     cardMessage.style.display = "none";
     rulesContainer.style.display = "block";
   } else {
@@ -778,21 +814,14 @@ infoIcon.onclick = () => {
     rulesContainer.style.display = "none";
 
     if(gameStarted){
-      if(!handLocked){
-        handSelect.style.display = "block";
-        comboRow.style.display = "none";
-        cardMessage.style.display = "block";
-      } else {
-        handSelect.style.display = "none";
-        comboRow.style.display = "flex";
-        cardMessage.style.display = "block";
-      }
+      cardMessage.innerHTML = "";
+      cardMessage.style.display = "block";
+      comboRow.style.display = "flex";
     } else {
       cardMessage.innerHTML =
         "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
       cardMessage.style.display = "block";
       comboRow.style.display = "none";
-      handSelect.style.display = "none";
     }
   }
 };
