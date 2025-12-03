@@ -30,7 +30,6 @@
       z-index: 30;
     }
 
-    /* 📙 Icon für Spielanleitung */
     .info-icon {
       position: absolute;
       top: 62px;
@@ -42,9 +41,7 @@
       user-select: none;
     }
 
-    .info-icon:hover {
-      opacity: 1;
-    }
+    .info-icon:hover { opacity: 1; }
 
     .info-icon.show-close::after {
       content: "✖";
@@ -118,7 +115,7 @@
       gap: 18px;
       padding: 10px;
       text-align: center;
-      overflow: hidden; /* wichtig, nur innen scrollen */
+      overflow: hidden;
       position: relative;
     }
 
@@ -157,19 +154,6 @@
       padding: 0 6px;
     }
 
-    .kipp-number {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #e5ff4a;
-    }
-
-    .kipp-stop {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #e5ff4a;
-      letter-spacing: 0.06em;
-    }
-
     .rules-container {
       display: none;
       width: 100%;
@@ -186,27 +170,12 @@
       margin: 0 0 4px;
     }
 
-    .rules-text h3 {
-      font-size: 0.98rem;
-      margin: 10px 0 4px;
-    }
-
     .rules-text p { margin: 4px 0; }
 
     .rules-separator {
       margin: 8px 0;
       border-top: 1px solid rgba(148,163,184,0.4);
     }
-
-    .rules-combo-example {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 6px 0 4px;
-    }
-
-    .rules-combo-example .rules-hand { font-size: 2.4rem; }
-    .rules-combo-example .rules-face { font-size: 2.8rem; }
 
     .buttons-row {
       display: grid;
@@ -243,10 +212,10 @@
       margin-bottom: 6px;
     }
 
-    .moves-text {
+    .moves-display {
       margin-top: 4px;
       font-size: 0.95rem;
-      color: #e5e7eb;
+      color: #cbd5f5;
     }
 
     .start-row {
@@ -338,7 +307,7 @@
       color: #451a03;
     }
 
-    /* Neues, professionelles Menü-Design */
+    /* Menü */
     .menu-box {
       background: #0f172a;
       padding: 22px 18px;
@@ -368,9 +337,7 @@
       cursor: pointer;
     }
 
-    .menu-item:hover {
-      background: #334155;
-    }
+    .menu-item:hover { background: #334155; }
 
     .menu-close-btn {
       width: 100%;
@@ -384,9 +351,7 @@
       cursor: pointer;
     }
 
-    .menu-close-btn:hover {
-      background: #dc2626;
-    }
+    .menu-close-btn:hover { background: #dc2626; }
 
     /* Hand-Auswahl-Overlay */
     .hand-overlay {
@@ -405,13 +370,13 @@
       padding: 18px;
       width: min(90vw, 360px);
       border: 1px solid rgba(148,163,184,0.7);
-      text-align: center;
     }
 
     .hand-dialog-title {
       margin: 0 0 10px;
       font-size: 1.15rem;
       font-weight: 800;
+      text-align: center;
     }
 
     .hand-grid {
@@ -460,6 +425,31 @@
 
     .hand-confirm { background: #22c55e; color: #022c22; }
     .hand-reset { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
+
+    /* Glückskipp & KIPP STOPP Text */
+    .luck-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .luck-roll {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #e5ff4a;
+      margin-bottom: 2px;
+    }
+
+    .luck-text {
+      font-size: 0.95rem;
+    }
+
+    .kippstopp-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #e5ff4a;
+      margin-top: 6px;
+    }
   </style>
 </head>
 
@@ -468,10 +458,9 @@
 <div class="app">
 
   <div class="hamburger" id="menuBtn">☰</div>
-
   <div class="info-icon" id="infoIcon">📙</div>
 
-  <!-- Neues Menü -->
+  <!-- Menü -->
   <div class="menu-overlay" id="menuOverlay">
     <div class="menu-box">
       <h3 class="menu-title">Menü</h3>
@@ -544,96 +533,17 @@
           <div class="smiley-face" id="smileyFace">😀</div>
         </div>
 
-        <!-- Starttext / KIPP-Infos -->
         <div class="card-message" id="cardMessage">
           📙 = Scrollbare Spielanleitung.<br><br>
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
-        <!-- Scrollbare Spielanleitung -->
         <div class="rules-container" id="rulesContainer">
           <div class="rules-text">
             <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
-
             <div class="rules-separator"></div>
-
-            <h3>1. KIPP-Box vorbereiten</h3>
-            <p>Stellt die KIPP-Box in die Mitte des Tisches und legt die Kugel in das Loch des Boxbodens ein.</p>
-
-            <div class="rules-separator"></div>
-
-            <h3>2. Kartonrahmen auflegen</h3>
-            <p>Legt den Kartonrahmen mit den Smiley-Händen nach oben auf die umlaufende Auflagefläche der Box.<br>
-            Der Rahmen kann beliebig gedreht aufgelegt werden – die Ausrichtung spielt keine Rolle.</p>
-
-            <div class="rules-separator"></div>
-
-            <h3>3. Würfel einlegen</h3>
-            <p>Schaut euch jetzt den Würfel an: Eine Ecke des Würfels ist auffällig abgeschrägt.</p>
-            <p>Legt den Würfel mit dieser abgeschrägten Ecke an der Kugel anliegend in eine beliebige der vier Boxecken.</p>
-            <p>Wenn der Würfel richtig positioniert ist, könnt ihr ihn im oder gegen den Uhrzeigersinn rundherum kippen – immer eine Ecke weiter, von Ecke zu Ecke.<br>
-            Probiert das gleich aus.</p>
-
-            <div class="rules-separator"></div>
-
-            <h3>4. Würfel bestücken</h3>
-            <p>Ein beliebiger Spieler beginnt mit dem Stecken der ersten vier Smiley-Knöpfe, während die anderen Spieler wegschauen.</p>
-            <p>Nimm vier beliebige Smiley-Knöpfe und stecke sie willkürlich in die vier Löcher.<br>
-            Jeder Smiley-Knopf wird so gesteckt, dass seine Ausrichtung logisch zur danebenliegenden Hand passt.</p>
-            <p>Dann kippst du den Würfel einmal im Uhrzeigersinn weiter.</p>
-            <p>Der nächste Spieler steckt vier neue Smiley-Knöpfe in die nun obenliegende Würfelfläche und kippt den Würfel anschließend ebenfalls einmal im Uhrzeigersinn weiter.<br>
-            Die anderen Spieler schauen wieder weg.</p>
-            <p>Der dritte Spieler steckt die letzten vier Smiley-Knöpfe in die letzte leere Würfelfläche.</p>
-            <p>Jetzt ist der Würfel vollständig bestückt.</p>
-
-            <div class="rules-separator"></div>
-
-            <h3>🎮 SPIELBEGINN UND SPIELVERLAUF</h3>
-
-            <div class="rules-separator"></div>
-
-            <h3>1. Start & persönliche Smiley-Hand-Kombination</h3>
-            <p>Zu Spielbeginn tippen alle Spieler auf Start, und so erhält jeder hier im Kombifeld eine zufallsgenerierte Smiley-Hand-Kombination – wie dieses Beispiel hier:</p>
-
-            <div class="rules-combo-example">
-              <span class="rules-hand">🤟</span>
-              <span class="rules-face">😁</span>
-            </div>
-
-            <p>Sie besteht aus einem der zwölf Smiley-Köpfe und einer der vier möglichen Hände.</p>
-            <p>Ziel ist es, den Würfel so zu kippen, dass der richtige Smiley-Kopf an der richtigen Hand zu liegen kommt –
-            dass sich also genau die Kombination ergibt, die auf deinem Handy vorgegeben ist.</p>
-            <p>Nach Klick auf Start wird der Button zu "Reset".<br>
-            Damit kommt man jederzeit wieder in den Anfangszustand zurück.</p>
-            <p><em>Hinweis: Wenn du während deiner Partie etwas in der Spielanleitung nachsehen möchtest, 
-            kannst du jederzeit auf das 📙-Icon tippen. Die angezeigte Smiley-Hand-Kombi verschwindet dabei 
-            nur vorübergehend und ist nach dem Schließen des Textes wieder da.</em></p>
-
-            <div class="rules-separator"></div>
-
-            <h3>2. Reihenfolge, KIPP-START-Ritual</h3>
-            <p>Es wird reihum im Uhrzeigersinn gespielt. Ein beliebiger Spieler beginnt.<br>
-            Allerdings kann eine Kipp-Partie nur begonnen werden, indem man vorher das KIPP-START-Ritual vollzieht:</p>
-            <p>Jeder macht so überzeugend wie möglich seine in der App vorgegebene Smiley-Hand-Kombi nach.<br>
-            Dann geht’s los.</p>
-
-            <div class="rules-separator"></div>
-
-            <h3>3. Prüfen, ob Kombi bereits aufliegt – ansagen – kippen</h3>
-            <p>Wenn du an der Reihe bist, prüfst du zuerst, ob der Würfel deine Smiley-Hand-Kombi bereits zeigt.</p>
-            <p>Wie die Punktevergabe genau funktioniert, kannst du in einer späteren Version der Spielanleitung nachlesen – für den Moment ist nur wichtig, dass die App alle Punkte automatisch zählt.</p>
-
-            <div class="rules-separator"></div>
-
-            <h3>Neue Runde starten</h3>
-            <p>Wenn ihr eine neue Runde spielen wollt:</p>
-            <p>1. Tippt auf allen Handys auf „Reset“ – die Punkte springen wieder auf 0.</p>
-            <p>2. Tippt dann auf „Start“ – jeder erhält erneut eine eigene, zufällige Smiley-Hand-Kombination.</p>
-            <p>Ihr könnt für eine neue Runde auch die Smiley-Knöpfe am Würfel neu umstecken.<br>
-            Mit 12 Knöpfen gibt es rund 479 Millionen verschiedene Steckkombinationen –<br>
-            niemand hat dann einen Vorteil, weil er sich Positionen gemerkt hat.</p>
-            <p>Vergesst vor jeder Partie das KIPP-START-Ritual nicht – sonst habt ihr kein Glück beim Kippen. 😉</p>
-
+            <p>Die ausführliche Spielanleitung kannst du hier später genau nach deinen Wünschen einfügen.</p>
+            <p>Für die Tests ist vor allem die Punktevergabe wichtig.</p>
           </div>
         </div>
 
@@ -643,12 +553,12 @@
 
   <div class="buttons-row">
     <button class="btn btn-primary" id="btnOwn">erkippt</button>
-    <button class="btn btn-secondary" id="btnOther">nicht erkippt</button>
+    <button class="btn btn-secondary" id="btnFail">nicht erkippt</button>
   </div>
 
   <div class="score-area">
     <div class="score-big" id="pointsDisplay">0</div>
-    <div class="moves-text" id="movesDisplay">Züge: 0/6</div>
+    <div class="moves-display" id="movesDisplay">Züge: 0/6</div>
     <div class="start-row">
       <button class="start-btn start-btn-start" id="btnStart">starten</button>
       <button class="start-btn start-btn-close" id="btnClose">schließen</button>
@@ -662,19 +572,20 @@ const faces = ["😉","😵‍💫","😁","😊","😠","😂","😍","😲","�
 const hands = ["🖐","🤞","🤟","👊"];
 
 let points = 0;
-let moves = 0;
-const MAX_MOVES = 6;
-
 let gameStarted = false;
 let rulesVisible = false;
-let kippStopped = false;
 
 let selectedHand = null;
 let tempSelectedHand = null;
 
 let headClicked = false;
 let handClicked = false;
-let currentKippNumber = null;
+let isLuckKipp = false;
+let luckRoll = null;
+let kippStopp = false;
+
+const maxMoves = 6;
+let moves = 0;
 
 /* DOM-Elemente */
 const faceEl = document.getElementById("smileyFace");
@@ -696,29 +607,40 @@ const handOptions = document.querySelectorAll(".hand-option");
 const handConfirm = document.getElementById("handConfirm");
 const handReset = document.getElementById("handReset");
 
-/* Menü-Button */
+/* Menü */
 document.getElementById("menuBtn").onclick = () =>
   document.getElementById("menuOverlay").style.display = "flex";
 
-/* Menü-Helfer */
 function closeMenu() {
   document.getElementById("menuOverlay").style.display = "none";
 }
 
 function openRulesScroll() {
   closeMenu();
-  if (!rulesVisible) {
-    infoIcon.click();
-  }
+  if (!rulesVisible) infoIcon.click();
 }
 
 function openRulesPdf() {
   window.open('KIPP_Smiley_Spielanleitung.PDF?v=2', '_blank');
 }
 
+/* Hilfsfunktionen */
 function randomInt(max){ return Math.floor(Math.random()*max); }
 
-function applyFistRotation(el) {
+function updateMoves() {
+  movesDisplay.textContent = `Züge: ${moves}/${maxMoves}`;
+}
+
+function clearSelections() {
+  headClicked = false;
+  handClicked = false;
+  isLuckKipp = false;
+  luckRoll = null;
+  faceEl.classList.remove("selected");
+  handEl.classList.remove("selected");
+}
+
+function applyHandRotation(el) {
   if (el.textContent === "👊") {
     el.style.transform = "rotate(-90deg)";
   } else {
@@ -726,81 +648,74 @@ function applyFistRotation(el) {
   }
 }
 
-function updateMovesDisplay() {
-  movesDisplay.textContent = "Züge: " + moves + "/" + MAX_MOVES;
-}
-
-function clearKippInfo() {
-  currentKippNumber = null;
-  if (!kippStopped) {
-    cardMessage.innerHTML = "";
-  }
-}
-
-function clearSelection() {
-  headClicked = false;
-  handClicked = false;
-  faceEl.classList.remove("selected");
-  handEl.classList.remove("selected");
-  clearKippInfo();
-}
-
-function updateKippInfo() {
-  if (headClicked && handClicked && !kippStopped) {
-    currentKippNumber = randomInt(6) + 1;
-    cardMessage.innerHTML =
-      'Glückskipp<br>Kippe <span class="kipp-number">' +
-      currentKippNumber +
-      "</span>-mal in eine beliebige Richtung.";
-    cardMessage.style.display = "block";
-  } else {
-    clearKippInfo();
-  }
-}
-
-function checkKippStopp() {
-  if (moves >= MAX_MOVES && !kippStopped) {
-    kippStopped = true;
-    clearSelection();
-    cardMessage.innerHTML = '<span class="kipp-stop">KIPP STOPP</span>';
-    cardMessage.style.display = "block";
-  }
-}
-
-function newCombo(){
-  if(!gameStarted || kippStopped) return;
-
-  const face = faces[randomInt(faces.length)];
-  faceEl.textContent = face;
-
-  const handSymbol = selectedHand || hands[randomInt(hands.length)];
-  handEl.textContent = handSymbol;
-  applyFistRotation(handEl);
-
-  clearSelection();
-
-  comboRow.style.display = "flex";
-  cardMessage.style.display = "block";
-}
-
-function beginGame() {
-  gameStarted = true;
-  kippStopped = false;
-  moves = 0;
-  points = 0;
-  pointsDisplay.textContent = "0";
-  updateMovesDisplay();
-  faceEl.style.fontSize = "5.2rem";
-  handEl.style.display = "inline-block";
+function showNormalCombo() {
   comboRow.style.display = "flex";
   cardMessage.innerHTML = "";
-  cardMessage.style.display = "block";
-  newCombo();
-  btnStart.textContent = "Reset";
-  btnStart.classList.add("reset-mode");
+
+  // Hand = gewählte Hand, falls vorhanden
+  if (selectedHand) {
+    handEl.textContent = selectedHand;
+  } else {
+    handEl.textContent = hands[randomInt(hands.length)];
+  }
+  applyHandRotation(handEl);
+
+  // Kopf zufällig
+  faceEl.textContent = faces[randomInt(faces.length)];
+  faceEl.style.fontSize = "5.2rem";
 }
 
-/* Hand-Auswahl-Overlay Logik */
+function triggerLuckKipp() {
+  if (!gameStarted || kippStopp || isLuckKipp) return;
+
+  isLuckKipp = true;
+
+  // 1 Glückspunkt vorweg
+  points += 1;
+  pointsDisplay.textContent = points;
+
+  // neuer Kopf (möglichst anderer)
+  let newFace;
+  do {
+    newFace = faces[randomInt(faces.length)];
+  } while (faces.length > 1 && newFace === faceEl.textContent);
+  faceEl.textContent = newFace;
+
+  // Zufalls-Kippzahl
+  luckRoll = 1 + randomInt(6);
+
+  cardMessage.innerHTML =
+    `<div class="luck-title">GLÜCKSKIPP</div>
+     <div class="luck-roll">${luckRoll}</div>
+     <div class="luck-text">Kippe ${luckRoll}-mal in eine beliebige Richtung.</div>`;
+}
+
+function showKippStopp() {
+  kippStopp = true;
+  clearSelections();
+
+  // Zufällige Kombi für den KIPP STOPP Screen
+  faceEl.textContent = faces[randomInt(faces.length)];
+  if (selectedHand) {
+    handEl.textContent = selectedHand;
+  } else {
+    handEl.textContent = hands[randomInt(hands.length)];
+  }
+  applyHandRotation(handEl);
+
+  comboRow.style.display = "flex";
+  cardMessage.innerHTML = `<div class="kippstopp-title">KIPP STOPP</div>`;
+}
+
+function finishMove(goesOn) {
+  // goesOn = true, wenn noch weitergespielt wird
+  clearSelections();
+  if (goesOn) {
+    showNormalCombo();
+  }
+}
+
+/* Hand-Auswahl-Overlay */
 handOptions.forEach(btn => {
   const symbolSpan = btn.querySelector(".hand-symbol");
   const handChar = symbolSpan.textContent;
@@ -820,7 +735,7 @@ handConfirm.onclick = () => {
   if (!tempSelectedHand) return;
   selectedHand = tempSelectedHand;
   handOverlay.style.display = "none";
-  beginGame();
+  startGame();
 };
 
 handReset.onclick = () => {
@@ -828,114 +743,155 @@ handReset.onclick = () => {
   handOptions.forEach(b => b.classList.remove("active"));
 };
 
-/* Start / Reset */
-btnStart.onclick = () => {
-  if(rulesVisible) return;
+/* Start-Logik */
+function startGame() {
+  gameStarted = true;
+  kippStopp = false;
+  points = 0;
+  moves = 0;
+  pointsDisplay.textContent = "0";
+  updateMoves();
 
-  if(!gameStarted){
+  clearSelections();
+  comboRow.style.display = "flex";
+  cardMessage.innerHTML = "";
+  showNormalCombo();
+
+  btnStart.textContent = "Reset";
+  btnStart.classList.add("reset-mode");
+}
+
+btnStart.onclick = () => {
+  if (rulesVisible) return;
+
+  if (!gameStarted) {
+    // erst Hand wählen
     if (!selectedHand) {
       handOverlay.style.display = "flex";
-    } else {
-      beginGame();
+      return;
     }
+    startGame();
   } else {
+    // Reset-Dialog
     resetOverlay.style.display = "flex";
   }
 };
 
-/* Reset-Dialog: Nein */
+/* Reset-Dialog */
 resetCancel.onclick = () => {
   resetOverlay.style.display = "none";
 };
 
-/* Reset-Dialog: Ja */
 resetConfirm.onclick = () => {
   resetOverlay.style.display = "none";
+
   gameStarted = false;
-  kippStopped = false;
+  kippStopp = false;
   points = 0;
   moves = 0;
-  updateMovesDisplay();
   pointsDisplay.textContent = "0";
+  updateMoves();
+
+  selectedHand = null;
+  tempSelectedHand = null;
+
+  clearSelections();
   handEl.style.display = "inline-block";
-  handEl.style.transform = "none";
+  applyHandRotation(handEl);
   faceEl.textContent = "😀";
   faceEl.style.fontSize = "5.2rem";
-  clearSelection();
+  comboRow.style.display = "none";
+
   cardMessage.innerHTML =
     "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
   cardMessage.style.display = "block";
-  comboRow.style.display = "none";
+
   btnStart.textContent = "starten";
   btnStart.classList.remove("reset-mode");
 };
 
-/* schließen-Button für die App */
+/* schließen-Button */
 document.getElementById("btnClose").onclick = () => {
-  if(window.confirm("App wirklich schließen?")) window.close();
+  if (window.confirm("App wirklich schließen?")) window.close();
 };
 
-/* Kopf / Hand anklickbar machen */
+/* Kopf / Hand anklickbar */
 faceEl.onclick = () => {
-  if(!gameStarted || rulesVisible || kippStopped) return;
+  if (!gameStarted || rulesVisible || kippStopp || isLuckKipp) return;
   headClicked = !headClicked;
   faceEl.classList.toggle("selected", headClicked);
 
+  // Wenn Kopf wieder deaktiviert wird, Hand auch zurücksetzen
   if (!headClicked) {
     handClicked = false;
     handEl.classList.remove("selected");
   }
 
-  updateKippInfo();
+  if (headClicked && handClicked) {
+    triggerLuckKipp();
+  }
 };
 
 handEl.onclick = () => {
-  if(!gameStarted || rulesVisible || kippStopped) return;
-  if (!headClicked) return; // Hand ohne Kopf bleibt wirkungslos
+  if (!gameStarted || rulesVisible || kippStopp || isLuckKipp) return;
+  // Hand darf nur reagieren, wenn Kopf aktiv ist
+  if (!headClicked) return;
+
   handClicked = !handClicked;
   handEl.classList.toggle("selected", handClicked);
-  updateKippInfo();
+
+  if (headClicked && handClicked) {
+    triggerLuckKipp();
+  }
 };
 
 /* Buttons: erkippt / nicht erkippt */
 document.getElementById("btnOwn").onclick = () => {
-  if(!gameStarted || rulesVisible || kippStopped) return;
+  if (!gameStarted || rulesVisible || kippStopp) return;
 
-  moves++;
-  updateMovesDisplay();
+  if (moves >= maxMoves) return;
 
-  // Punktevergabe nach Kopf/Hand-Status
-  if (headClicked && handClicked) {
-    // Glückskipp
-    points += 8;
-  } else if (headClicked) {
-    // Kopf sichtbar, aber nicht an der Hand
-    points += 3;
+  if (isLuckKipp) {
+    // Glückskipp erkippt: +7 (1 Punkt gab es schon beim Auslösen)
+    points += 7;
   } else {
-    // reiner Logikkipp
-    points += 5;
+    // normale Punkte: sichtbarer Kopf = 3, unsichtbar = 5
+    points += headClicked ? 3 : 5;
+  }
+  pointsDisplay.textContent = points;
+
+  moves += 1;
+  updateMoves();
+
+  if (moves >= maxMoves) {
+    showKippStopp();
+    return;
   }
 
-  pointsDisplay.textContent = points;
-  clearSelection();
-  newCombo();
-  checkKippStopp();
+  finishMove(true);
 };
 
-document.getElementById("btnOther").onclick = () => {
-  if(!gameStarted || rulesVisible || kippStopped) return;
+document.getElementById("btnFail").onclick = () => {
+  if (!gameStarted || rulesVisible || kippStopp) return;
 
-  moves++;
-  updateMovesDisplay();
-  clearSelection(); // gleiche KIPP-Vorgabe bleibt
-  checkKippStopp();
+  if (moves >= maxMoves) return;
+
+  moves += 1;
+  updateMoves();
+
+  if (moves >= maxMoves) {
+    showKippStopp();
+    return;
+  }
+
+  finishMove(true);
 };
 
 /* Spielanleitung im Kombifeld ein-/ausblenden */
 infoIcon.onclick = () => {
   rulesVisible = !rulesVisible;
 
-  if(rulesVisible){
+  if (rulesVisible) {
     infoIcon.classList.add("show-close");
     comboRow.style.display = "none";
     cardMessage.style.display = "none";
@@ -944,9 +900,10 @@ infoIcon.onclick = () => {
     infoIcon.classList.remove("show-close");
     rulesContainer.style.display = "none";
 
-    if(gameStarted){
+    if (gameStarted) {
+      cardMessage.innerHTML = "";
+      cardMessage.style.display = "block";
       comboRow.style.display = "flex";
-      cardMessage.style.display = "block"; // Inhalt bleibt (z.B. Glückskipp oder KIPP STOPP)
     } else {
       cardMessage.innerHTML =
         "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
@@ -955,9 +912,6 @@ infoIcon.onclick = () => {
     }
   }
 };
-
-/* Initial */
-updateMovesDisplay();
 </script>
 
 </body>
