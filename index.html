@@ -166,8 +166,15 @@
     }
 
     .rules-text h2 {
-      font-size: 1.05rem;
-      margin: 0 0 4px;
+      font-size: 1.15rem;
+      margin: 0 0 6px;
+      font-weight: 800;
+    }
+
+    .rules-text h3 {
+      font-size: 1.0rem;
+      margin: 10px 0 4px;
+      font-weight: 700;
     }
 
     .rules-text p { margin: 4px 0; }
@@ -175,6 +182,14 @@
     .rules-separator {
       margin: 8px 0;
       border-top: 1px solid rgba(148,163,184,0.4);
+    }
+
+    .rules-text img {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 10px;
+      margin: 6px 0 10px;
+      display: block;
     }
 
     .buttons-row {
@@ -433,18 +448,10 @@
       margin-bottom: 4px;
     }
 
-    .luck-roll {
-      font-size: 3rem;
-      font-weight: 900;
-      color: #e5ff4a;
-      margin-bottom: 2px;
-    }
-
     .luck-text {
       font-size: 0.95rem;
     }
 
-    /* NEU: Zahl im Satz größer & orange-gelb */
     .luck-text .luck-number {
       font-size: 1.6rem;
       font-weight: 900;
@@ -546,12 +553,60 @@
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
+        <!-- Scrollbare Spielanleitung -->
         <div class="rules-container" id="rulesContainer">
           <div class="rules-text">
-            <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
+
+            <h2>KIPP SMILEY – Spielanleitung</h2>
+
+            <p><strong>Spieleranzahl:</strong> 1–6</p>
+            <p><strong>Altersempfehlung:</strong> ab 7 Jahren</p>
+            <p><strong>Spielkategorie:</strong> Logik- &amp; Merkspiel (Hybrid: Physisch + App)</p>
+            <p><strong>Spieldauer pro Partie:</strong> ca. 20 Minuten</p>
+
             <div class="rules-separator"></div>
-            <p>Die ausführliche Spielanleitung kannst du hier später genau nach deinen Wünschen einfügen.</p>
-            <p>Für die Tests ist vor allem die Punktevergabe wichtig.</p>
+
+            <h3>Spielmaterial</h3>
+            <p>• 1 KIPP-Box (140 × 140 × 70 mm)</p>
+            <p>• 1 KIPP-Würfel (70 × 70 × 70 mm)</p>
+            <p>• 1 Kartonrahmen, 12 Smiley-Knöpfe (Ø 16 mm), 1 Holzkugel (Ø 15 mm)</p>
+            <p>• Smartphone/Tablet mit der KIPP-SMILEY-App</p>
+
+            <img src="spielmaterial.jpg" alt="Spielmaterial von KIPP SMILEY">
+
+            <div class="rules-separator"></div>
+
+            <h3>Vorbereitung</h3>
+
+            <p><strong>1. KIPP-Box vorbereiten</strong></p>
+            <p>Stellt die KIPP-Box in die Mitte des Tisches und legt die Kugel in das Loch des Boxbodens ein.</p>
+
+            <img src="kugel_wuerfel.jpg" alt="Kugel im Boxboden und KIPP-Würfel an der Kugel anliegend">
+
+            <p><strong>2. Kartonrahmen auflegen</strong></p>
+            <p>Legt den Kartonrahmen mit den Smiley-Händen nach oben auf die umlaufende Auflagefläche der Box.</p>
+            <p>Der Rahmen kann beliebig gedreht aufgelegt werden – die Ausrichtung spielt keine Rolle.</p>
+
+            <img src="rahmen.jpg" alt="Kartonrahmen auf der KIPP-Box">
+
+            <p><strong>3. Würfel bestücken</strong></p>
+            <p>Schaut euch jetzt den KIPP-Würfel an: Eine Ecke des Würfels ist auffällig abgeschrägt.</p>
+            <p>Legt den Würfel mit dieser abgeschrägten Ecke an der Kugel anliegend in eine beliebige der vier Boxecken.</p>
+            <p>Wenn der Würfel richtig positioniert ist, könnt ihr ihn im oder gegen den Uhrzeigersinn rundherum kippen –
+               immer eine Ecke weiter, von Ecke zu Ecke. Probiert das kurz aus.</p>
+            <p>Jetzt werden die 12 Smiley-Knöpfe gesteckt. Ein beliebiger Spieler beginnt und steckt – während die anderen
+               Spieler wegschauen – vier beliebige Smiley-Knöpfe in die vier Löcher der obenliegenden Würfelfläche.</p>
+            <p>Jeder Smiley-Kopf wird so gesteckt, dass seine Ausrichtung logisch zur danebenliegenden Hand passt.</p>
+            <p>Dann kippt der Spieler den Würfel einmal im Uhrzeigersinn weiter. Der nächste Spieler steckt vier neue Smiley-Knöpfe
+               in die nun obenliegende Würfelfläche und kippt den Würfel anschließend ebenfalls einmal im Uhrzeigersinn weiter.
+               Die anderen Spieler schauen wieder weg.</p>
+            <p>Der dritte Spieler steckt die letzten vier Smiley-Knöpfe in die letzte leere Würfelfläche.
+               Jetzt ist der Würfel vollständig bestückt und das Spiel kann beginnen.</p>
+
+            <div class="rules-separator"></div>
+            <p><em>Hinweis: Die genaue Zugfolge und Punktevergabe findest du in einem späteren Abschnitt der Spielanleitung.
+               Zum Testen reicht zunächst dieser Vorbereitungsteil.</em></p>
+
           </div>
         </div>
 
@@ -660,7 +715,6 @@ function showNormalCombo() {
   comboRow.style.display = "flex";
   cardMessage.innerHTML = "";
 
-  // Hand = gewählte Hand, falls vorhanden
   if (selectedHand) {
     handEl.textContent = selectedHand;
   } else {
@@ -668,7 +722,6 @@ function showNormalCombo() {
   }
   applyHandRotation(handEl);
 
-  // Kopf zufällig
   faceEl.textContent = faces[randomInt(faces.length)];
   faceEl.style.fontSize = "5.2rem";
 }
@@ -701,7 +754,6 @@ function showKippStopp() {
   kippStopp = true;
   clearSelections();
 
-  // Zufällige Kombi für den KIPP STOPP Screen
   faceEl.textContent = faces[randomInt(faces.length)];
   if (selectedHand) {
     handEl.textContent = selectedHand;
@@ -715,7 +767,6 @@ function showKippStopp() {
 }
 
 function finishMove(goesOn) {
-  // goesOn = true, wenn noch weitergespielt wird
   clearSelections();
   if (goesOn) {
     showNormalCombo();
@@ -772,14 +823,12 @@ btnStart.onclick = () => {
   if (rulesVisible) return;
 
   if (!gameStarted) {
-    // erst Hand wählen
     if (!selectedHand) {
       handOverlay.style.display = "flex";
       return;
     }
     startGame();
   } else {
-    // Reset-Dialog
     resetOverlay.style.display = "flex";
   }
 };
@@ -828,7 +877,6 @@ faceEl.onclick = () => {
   headClicked = !headClicked;
   faceEl.classList.toggle("selected", headClicked);
 
-  // Wenn Kopf wieder deaktiviert wird, Hand auch zurücksetzen
   if (!headClicked) {
     handClicked = false;
     handEl.classList.remove("selected");
@@ -841,7 +889,6 @@ faceEl.onclick = () => {
 
 handEl.onclick = () => {
   if (!gameStarted || rulesVisible || kippStopp || isLuckKipp) return;
-  // Hand darf nur reagieren, wenn Kopf aktiv ist
   if (!headClicked) return;
 
   handClicked = !handClicked;
@@ -855,14 +902,11 @@ handEl.onclick = () => {
 /* Buttons: erkippt / nicht erkippt */
 document.getElementById("btnOwn").onclick = () => {
   if (!gameStarted || rulesVisible || kippStopp) return;
-
   if (moves >= maxMoves) return;
 
   if (isLuckKipp) {
-    // Glückskipp erkippt: +7 (1 Punkt gab es schon beim Auslösen)
-    points += 7;
+    points += 7; // 1 Punkt gab es schon beim Auslösen
   } else {
-    // normale Punkte: sichtbarer Kopf = 3, unsichtbar = 5
     points += headClicked ? 3 : 5;
   }
   pointsDisplay.textContent = points;
@@ -880,7 +924,6 @@ document.getElementById("btnOwn").onclick = () => {
 
 document.getElementById("btnFail").onclick = () => {
   if (!gameStarted || rulesVisible || kippStopp) return;
-
   if (moves >= maxMoves) return;
 
   moves += 1;
