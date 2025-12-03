@@ -444,6 +444,14 @@
       font-size: 0.95rem;
     }
 
+    /* NEU: Zahl im Satz größer & orange-gelb */
+    .luck-text .luck-number {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #ffc93b;
+      margin: 0 2px;
+    }
+
     .kippstopp-title {
       font-size: 2rem;
       font-weight: 900;
@@ -686,8 +694,7 @@ function triggerLuckKipp() {
 
   cardMessage.innerHTML =
     `<div class="luck-title">GLÜCKSKIPP</div>
-     <div class="luck-roll">${luckRoll}</div>
-     <div class="luck-text">Kippe ${luckRoll}-mal in eine beliebige Richtung.</div>`;
+     <div class="luck-text">Kippe <span class="luck-number">${luckRoll}</span>-mal in eine beliebige Richtung.</div>`;
 }
 
 function showKippStopp() {
