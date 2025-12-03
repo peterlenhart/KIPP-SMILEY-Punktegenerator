@@ -182,6 +182,14 @@
       border-top: 1px solid rgba(148,163,184,0.4);
     }
 
+    /* Bilder in der scrollbaren Anleitung */
+    .rules-img {
+      width: 100%;
+      border-radius: 10px;
+      margin: 4px 0 6px;
+      display: block;
+    }
+
     .win-title {
       font-size: 2.4rem;
       font-weight: 900;
@@ -520,7 +528,7 @@
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
-        <!-- 🔽 Hier ist jetzt deine scrollbare Anleitung mit GENAU deinen Sätzen -->
+        <!-- Scrollbare Anleitung mit Bildern -->
         <div class="rules-container" id="rulesContainer">
           <div class="rules-text">
             <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
@@ -528,15 +536,18 @@
             <div class="rules-separator"></div>
 
             <h3>1. Rahmen auflegen</h3>
+            <!-- Bild 1: Dateiname im Repo anpassen -->
+            <img src="rahmen.jpg" alt="Rahmen auf der Box" class="rules-img" />
             <p>Rahmen auflegen. Ausrichtung/wie gedreht egal.</p>
 
             <div class="rules-separator"></div>
 
             <h3>2. Kugel und KIPP-Würfel einlegen</h3>
+            <!-- Bild 2: Dateiname im Repo anpassen -->
+            <img src="kugel_wuerfel.jpg" alt="Kugel und KIPP-Würfel in der Box" class="rules-img" />
             <p>Kugel in das Loch des Boxbodens legen und KIPP-Würfel mit der abgeschrägten Kante an der Kugel anliegend in eine beliebige Ecke der Box setzen.</p>
           </div>
         </div>
-        <!-- 🔼 Ende scrollbare Anleitung -->
 
       </div>
     </div>
@@ -618,7 +629,8 @@ function clearSelectionFlags() {
 
 function applyFistRotationToElement(el) {
   if (el.textContent === "👊") {
-    el.style.transform = "rotate(90deg)";
+    /* 90° gegen den Uhrzeigersinn – Daumen rechts oben */
+    el.style.transform = "rotate(-90deg)";
   } else {
     el.style.transform = "none";
   }
@@ -672,7 +684,8 @@ handOptions.forEach(btn => {
   const handChar = symbolSpan.textContent;
 
   if (handChar === "👊") {
-    symbolSpan.style.transform = "rotate(90deg)";
+    /* Auswahl-Faust ebenso gegen den Uhrzeigersinn drehen */
+    symbolSpan.style.transform = "rotate(-90deg)";
   }
 
   btn.onclick = () => {
