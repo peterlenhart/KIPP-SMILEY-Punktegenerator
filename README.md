@@ -1,2 +1,781 @@
-# KIPP-SMILEY-Punktegenerator
-Je nach Ausgangslage, Klick auf Hand, Kopf oder beides, werden bei späterem Kipperfolg Punkte vergeben. Bei Fehlkipp null. Jeder hat eine andere, eigene Hand, fie er zu Beginn wählt.
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KIPP SMILEY</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: #121826;
+      color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px 12px;
+    }
+
+    .hamburger {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 2rem;
+      cursor: pointer;
+      user-select: none;
+      z-index: 30;
+    }
+
+    /* 📙 Icon für Spielanleitung */
+    .info-icon {
+      position: absolute;
+      top: 62px;           
+      right: 22px;
+      font-size: 1.7rem;
+      cursor: pointer;
+      z-index: 25;
+      opacity: 0.9;
+      user-select: none;
+    }
+
+    .info-icon:hover {
+      opacity: 1;
+    }
+
+    .info-icon.show-close::after {
+      content: "✖";
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      font-size: 1.4rem;
+      color: #ff3333;
+      text-shadow: 0 0 4px #000;
+      pointer-events: none;
+    }
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      color: #fff;
+      font-size: 1.4rem;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 1.9rem;
+      letter-spacing: 0.05em;
+      font-weight: 800;
+    }
+
+    .card-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      width: min(90vw, 360px);
+      height: min(90vw, 360px);
+      max-width: 380px;
+      max-height: 380px;
+      background: linear-gradient(145deg, #1f2838, #151b28);
+      border-radius: 28px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .card-inner {
+      width: 92%;
+      height: 82%;
+      background: #0f172a;
+      border-radius: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 10px;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .combo-row {
+      display: none;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+    }
+
+    .smiley-face,
+    .smiley-hand {
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .smiley-face {
+      font-size: 5.2rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+    }
+
+    .smiley-hand {
+      font-size: 4.2rem;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+    }
+
+    .smiley-selected {
+      box-shadow: 0 0 0 3px #facc15, 0 4px 6px rgba(0,0,0,0.7);
+      border-radius: 999px;
+      transform: translateY(-2px);
+    }
+
+    .card-message {
+      font-size: 1.25rem;
+      font-weight: 700;
+      opacity: 0.95;
+      color: #f8fafc;
+      line-height: 1.35;
+      padding: 0 6px;
+    }
+
+    .rules-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      text-align: left;
+      padding: 8px 10px 4px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .rules-text h2 {
+      font-size: 1.05rem;
+      margin: 0 0 4px;
+    }
+
+    .rules-text h3 {
+      font-size: 0.98rem;
+      margin: 10px 0 4px;
+    }
+
+    .rules-text p { margin: 4px 0; }
+
+    .rules-separator {
+      margin: 8px 0;
+      border-top: 1px solid rgba(148,163,184,0.4);
+    }
+
+    .rules-combo-example {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 6px 0 4px;
+    }
+
+    .rules-combo-example .rules-hand { font-size: 2.4rem; }
+    .rules-combo-example .rules-face { font-size: 2.8rem; }
+
+    .win-title {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #facc15;
+      text-shadow: 2px 2px 0 black;
+      margin-top: -10px;
+    }
+
+    .win-sub {
+      font-size: 1rem;
+      margin-top: 4px;
+    }
+
+    .buttons-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 20px;
+      padding: 14px 10px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-primary { background: #10b981; color: #022c22; }
+    .btn-secondary { background: #f59e0b; color: #451a03; }
+
+    .score-area {
+      margin-top: 6px;
+      padding: 20px 14px 22px;
+      background: #0b1220;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,0.3);
+      text-align: center;
+    }
+
+    .score-big {
+      font-size: 3.4rem;
+      font-weight: 900;
+      color: #e5ff4a;
+      margin-bottom: 2px;
+    }
+
+    .turn-info {
+      font-size: 0.95rem;
+      color: #cbd5f5;
+      margin-bottom: 6px;
+    }
+
+    .start-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .start-btn {
+      flex: 1;
+      border-radius: 16px;
+      padding: 10px 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .start-btn-start {
+      background: #22c55e;
+      color: #022c22;
+      border-color: #16a34a;
+    }
+
+    .start-btn-start.reset-mode {
+      background: transparent;
+      color: #22c55e;
+      border-color: #16a34a;
+    }
+
+    .start-btn-close { background: #ef4444; color: white; }
+
+    .reset-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 40;
+    }
+
+    .reset-dialog {
+      background: #0f172a;
+      border-radius: 20px;
+      padding: 18px 18px 16px;
+      width: min(80vw, 320px);
+      border: 1px solid rgba(148,163,184,0.6);
+      text-align: center;
+    }
+
+    .reset-title {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .reset-text {
+      margin: 0 0 14px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .reset-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .reset-btn {
+      flex: 1;
+      border-radius: 14px;
+      padding: 9px 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+    }
+
+    .reset-btn.cancel {
+      background: #111827;
+      color: #e5e7eb;
+      border: 1px solid #4b5563;
+    }
+
+    .reset-btn.confirm {
+      background: #f97316;
+      color: #451a03;
+    }
+
+    /* Neues, professionelles Menü-Design */
+    .menu-box {
+      background: #0f172a;
+      padding: 22px 18px;
+      border-radius: 18px;
+      width: min(85vw, 340px);
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .menu-title {
+      margin: 0 0 14px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .menu-item {
+      width: 100%;
+      background: #1e293b;
+      color: #f1f5f9;
+      border: none;
+      padding: 12px 10px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background: #334155;
+    }
+
+    .menu-close-btn {
+      width: 100%;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .menu-close-btn:hover {
+      background: #dc2626;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="hamburger" id="menuBtn">☰</div>
+
+  <div class="info-icon" id="infoIcon">📙</div>
+
+  <!-- Neues Menü -->
+  <div class="menu-overlay" id="menuOverlay">
+    <div class="menu-box">
+      <h3 class="menu-title">Menü</h3>
+
+      <button onclick="openRulesScroll()" class="menu-item">
+        📙 Scrollbare Spielanleitung
+      </button>
+
+      <button onclick="openRulesPdf()" class="menu-item">
+        ⬇️ PDF herunterladen
+      </button>
+
+      <button onclick="window.location.href='mailto:office@p-lenhart.at'" class="menu-item">
+        Kontakt: Peter Lenhart
+      </button>
+
+      <button onclick="closeMenu()" class="menu-close-btn">
+        schließen
+      </button>
+    </div>
+  </div>
+
+  <div class="reset-overlay" id="resetOverlay">
+    <div class="reset-dialog">
+      <p class="reset-title">Reset?</p>
+      <p class="reset-text">
+        Möchtest du wirklich die Punkte und das gesamte Spiel zurücksetzen?
+      </p>
+      <div class="reset-buttons">
+        <button class="reset-btn cancel" id="resetCancel">Nein</button>
+        <button class="reset-btn confirm" id="resetConfirm">Ja</button>
+      </div>
+    </div>
+  </div>
+
+  <h1>KIPP SMILEY</h1>
+
+  <div class="card-wrapper">
+    <div class="card">
+      <div class="card-inner">
+
+        <div class="combo-row" id="comboRow">
+          <div class="smiley-hand" id="smileyHand">🖐</div>
+          <div class="smiley-face" id="smileyFace">😀</div>
+        </div>
+
+        <!-- Starttext -->
+        <div class="card-message" id="cardMessage">
+          📙 = Scrollbare Spielanleitung.<br><br>
+          ☰ = PDF-Spielanleitung herunterladen.
+        </div>
+
+        <!-- Scrollbare Spielanleitung (noch alte Version, kannst du später ersetzen) -->
+        <div class="rules-container" id="rulesContainer">
+          <div class="rules-text">
+            <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
+            <!-- … hier bleibt dein bisheriger Text; kannst du später mit der neuen Version austauschen … -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons-row">
+    <button class="btn btn-primary" id="btnOwn">erkippt</button>
+    <button class="btn btn-secondary" id="btnFail">fehlkipp</button>
+  </div>
+
+  <div class="score-area">
+    <div class="score-big" id="pointsDisplay">0</div>
+    <div class="turn-info" id="turnInfo">0 von 6 KIPPS</div>
+    <div class="start-row">
+      <button class="start-btn start-btn-start" id="btnStart">Start</button>
+      <button class="start-btn start-btn-close" id="btnClose">schließen</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const faces = ["😉","😵‍💫","😁","😊","😠","😂","😍","😲","😚","🙄","😬","🙂"];
+const hands = ["🖐","🤞","🤟","👊"];
+
+let points = 0;
+let gameStarted = false;
+let rulesVisible = false;
+let gameStopped = false;    // nach 6 KIPPS gesperrt
+let moves = 0;
+const MAX_MOVES = 6;
+
+let faceSelected = false;
+let handSelected = false;
+
+const faceEl = document.getElementById("smileyFace");
+const handEl = document.getElementById("smileyHand");
+const comboRow = document.getElementById("comboRow");
+const cardMessage = document.getElementById("cardMessage");
+const rulesContainer = document.getElementById("rulesContainer");
+const pointsDisplay = document.getElementById("pointsDisplay");
+const btnStart = document.getElementById("btnStart");
+const infoIcon = document.getElementById("infoIcon");
+const turnInfo = document.getElementById("turnInfo");
+
+const resetOverlay = document.getElementById("resetOverlay");
+const resetCancel = document.getElementById("resetCancel");
+const resetConfirm = document.getElementById("resetConfirm");
+
+document.getElementById("menuBtn").onclick = () =>
+  document.getElementById("menuOverlay").style.display = "flex";
+
+/* Menü-Helfer */
+function closeMenu() {
+  document.getElementById("menuOverlay").style.display = "none";
+}
+
+function openRulesScroll() {
+  closeMenu();
+  if (!rulesVisible) {
+    infoIcon.click();
+  }
+}
+
+function openRulesPdf() {
+  window.open('KIPP_Smiley_Spielanleitung.PDF?v=2', '_blank');
+}
+
+function randomInt(max){ return Math.floor(Math.random()*max); }
+
+function updateTurnInfo() {
+  if (!gameStarted) {
+    turnInfo.textContent = "0 von " + MAX_MOVES + " KIPPS";
+  } else {
+    const shown = Math.min(moves, MAX_MOVES);
+    turnInfo.textContent = shown + " von " + MAX_MOVES + " KIPPS";
+  }
+}
+
+function updateSelectionStyles() {
+  if (faceSelected) {
+    faceEl.classList.add("smiley-selected");
+  } else {
+    faceEl.classList.remove("smiley-selected");
+  }
+
+  if (handSelected) {
+    handEl.classList.add("smiley-selected");
+  } else {
+    handEl.classList.remove("smiley-selected");
+  }
+}
+
+function newCombo(){
+  if(!gameStarted || gameStopped) return;
+
+  faceEl.textContent = faces[randomInt(faces.length)];
+
+  const randomHand = hands[randomInt(hands.length)];
+  handEl.textContent = randomHand;
+
+  if(randomHand === "👊"){
+    handEl.style.transform = "rotate(-90deg)";
+  } else {
+    handEl.style.transform = "none";
+  }
+
+  // Auswahl zurücksetzen
+  faceSelected = false;
+  handSelected = false;
+  updateSelectionStyles();
+
+  comboRow.style.display = "flex";
+  cardMessage.innerHTML = "";
+  cardMessage.style.display = "block";
+}
+
+function showKippStop() {
+  gameStopped = true;
+  comboRow.style.display = "none";
+  cardMessage.innerHTML =
+    `<div class="win-title">KIPP-STOP</div>
+     <div class="win-sub">Endstand: ${points} Punkte</div>`;
+  cardMessage.style.display = "block";
+}
+
+function endOfTurn(success){
+  moves++;
+  updateTurnInfo();
+
+  // nach KIPP (egal ob Erfolg oder Fehlkipp) wird die Auswahl zurückgesetzt
+  faceSelected = false;
+  handSelected = false;
+  updateSelectionStyles();
+
+  if (moves >= MAX_MOVES) {
+    showKippStop();
+    return;
+  }
+
+  if (success) {
+    newCombo();
+  }
+  // bei Fehlkipp: keine neue Kombi – die aktuelle KIPP-Vorgabe bleibt
+}
+
+// Klick auf Smiley-Kopf (sichtbarer Kopf markieren)
+faceEl.addEventListener("click", () => {
+  if(!gameStarted || rulesVisible || gameStopped) return;
+
+  faceSelected = !faceSelected;
+  updateSelectionStyles();
+
+  // Prüfen auf "Glückspunkt": Kopf UND Hand angeklickt
+  if (faceSelected && handSelected) {
+    points += 1;
+    pointsDisplay.textContent = points;
+
+    // Glückspunkt verbraucht die aktuelle Kombi -> neue KIPP-Vorgabe
+    faceSelected = false;
+    handSelected = false;
+    updateSelectionStyles();
+    newCombo();
+  }
+});
+
+// Klick auf Hand (für aufgelegte Kombi)
+handEl.addEventListener("click", () => {
+  if(!gameStarted || rulesVisible || gameStopped) return;
+
+  handSelected = !handSelected;
+  updateSelectionStyles();
+
+  if (faceSelected && handSelected) {
+    points += 1;
+    pointsDisplay.textContent = points;
+
+    faceSelected = false;
+    handSelected = false;
+    updateSelectionStyles();
+    newCombo();
+  }
+});
+
+// "erkippt" – Ziel-Kombi liegt nach dem Kippen
+document.getElementById("btnOwn").onclick = () => {
+  if(!gameStarted || rulesVisible || gameStopped) return;
+
+  if (faceSelected && !handSelected) {
+    // sichtbarer Kopf, nicht aufgelegt
+    points += 3;
+  } else if (!faceSelected && !handSelected) {
+    // verdeckter Kopf
+    points += 5;
+  } else if (faceSelected && handSelected) {
+    // sollte eigentlich nicht vorkommen (Glückspunkt vergibt sofort neue Kombi)
+    // zur Sicherheit: wie "sichtbarer Kopf" behandeln
+    points += 3;
+  }
+
+  pointsDisplay.textContent = points;
+  endOfTurn(true);
+};
+
+// "fehlkipp" – Ziel-Kombi NICHT getroffen
+document.getElementById("btnFail").onclick = () => {
+  if(!gameStarted || rulesVisible || gameStopped) return;
+  // 0 Punkte, Kombi bleibt, aber Zug zählt
+  endOfTurn(false);
+};
+
+// Start / Reset
+btnStart.onclick = () => {
+  if(rulesVisible) return;
+
+  if(!gameStarted){
+    // Start
+    gameStarted = true;
+    gameStopped = false;
+    points = 0;
+    moves = 0;
+    pointsDisplay.textContent = "0";
+    updateTurnInfo();
+    cardMessage.innerHTML = "";
+    comboRow.style.display = "flex";
+    handEl.style.display = "inline-block";
+    handEl.style.transform = "none";
+    faceEl.style.fontSize = "5.2rem";
+
+    faceSelected = false;
+    handSelected = false;
+    updateSelectionStyles();
+
+    newCombo();
+    btnStart.textContent = "Reset";
+    btnStart.classList.add("reset-mode");
+  } else {
+    // Reset-Dialog anzeigen
+    resetOverlay.style.display = "flex";
+  }
+};
+
+// Reset-Dialog: Nein
+resetCancel.onclick = () => {
+  resetOverlay.style.display = "none";
+};
+
+// Reset-Dialog: Ja
+resetConfirm.onclick = () => {
+  resetOverlay.style.display = "none";
+  gameStopped = false;
+  gameStarted = false;
+  points = 0;
+  moves = 0;
+  pointsDisplay.textContent = "0";
+  updateTurnInfo();
+
+  handEl.style.display = "inline-block";
+  handEl.style.transform = "none";
+  faceEl.textContent = "😀";
+  faceEl.style.fontSize = "5.2rem";
+
+  faceSelected = false;
+  handSelected = false;
+  updateSelectionStyles();
+
+  cardMessage.innerHTML =
+    "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
+  cardMessage.style.display = "block";
+  comboRow.style.display = "none";
+  btnStart.textContent = "Start";
+  btnStart.classList.remove("reset-mode");
+};
+
+// schließen-Button für die App
+document.getElementById("btnClose").onclick = () => {
+  if(window.confirm("App wirklich schließen?")) window.close();
+};
+
+// Spielanleitung im Kombifeld ein-/ausblenden
+infoIcon.onclick = () => {
+  rulesVisible = !rulesVisible;
+
+  if(rulesVisible){
+    infoIcon.classList.add("show-close");
+    comboRow.style.display = "none";
+    cardMessage.style.display = "none";
+    rulesContainer.style.display = "block";
+  } else {
+    infoIcon.classList.remove("show-close");
+    rulesContainer.style.display = "none";
+
+    if(gameStarted){
+      if (gameStopped) {
+        // Endbildschirm bleibt sichtbar
+        comboRow.style.display = "none";
+        cardMessage.style.display = "block";
+      } else {
+        cardMessage.innerHTML = "";
+        cardMessage.style.display = "block";
+        comboRow.style.display = "flex";
+      }
+    } else {
+      cardMessage.innerHTML =
+        "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
+      cardMessage.style.display = "block";
+      comboRow.style.display = "none";
+    }
+  }
+};
+
+// Initial
+updateTurnInfo();
+</script>
+
+</body>
+</html>
