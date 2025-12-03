@@ -146,8 +146,8 @@
     }
 
     .card-message {
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-size: 1.05rem;
+      font-weight: 600;
       opacity: 0.95;
       color: #f8fafc;
       line-height: 1.35;
@@ -160,7 +160,7 @@
       height: 100%;
       overflow-y: auto;
       text-align: left;
-      padding: 8px 10px 4px;
+      padding: 8px 10px 10px;
       font-size: 0.92rem;
       line-height: 1.45;
     }
@@ -182,7 +182,6 @@
       border-top: 1px solid rgba(148,163,184,0.4);
     }
 
-    /* Bilder in der scrollbaren Anleitung */
     .rules-img {
       width: 100%;
       border-radius: 10px;
@@ -207,7 +206,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 8px;
     }
 
     .btn {
@@ -224,7 +223,7 @@
 
     .score-area {
       margin-top: 6px;
-      padding: 20px 14px 22px;
+      padding: 16px 14px 18px;
       background: #0b1220;
       border-radius: 18px;
       border: 1px solid rgba(148,163,184,0.3);
@@ -235,7 +234,12 @@
       font-size: 3.4rem;
       font-weight: 900;
       color: #e5ff4a;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
+    }
+
+    .moves-text {
+      margin-top: 4px;
+      font-size: 0.98rem;
     }
 
     .start-row {
@@ -327,6 +331,7 @@
       color: #451a03;
     }
 
+    /* Menü */
     .menu-box {
       background: #0f172a;
       padding: 22px 18px;
@@ -372,6 +377,7 @@
 
     .menu-close-btn:hover { background: #dc2626; }
 
+    /* Hand-Auswahl-Overlay */
     .hand-overlay {
       position: fixed;
       inset: 0;
@@ -442,7 +448,7 @@
     }
 
     .hand-confirm { background: #22c55e; color: #022c22; }
-    .hand-reset   { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
+    .hand-reset { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
   </style>
 </head>
 
@@ -453,6 +459,7 @@
   <div class="hamburger" id="menuBtn">☰</div>
   <div class="info-icon" id="infoIcon">📙</div>
 
+  <!-- Menü -->
   <div class="menu-overlay" id="menuOverlay">
     <div class="menu-box">
       <h3 class="menu-title">Menü</h3>
@@ -475,6 +482,7 @@
     </div>
   </div>
 
+  <!-- Reset-Dialog -->
   <div class="reset-overlay" id="resetOverlay">
     <div class="reset-dialog">
       <p class="reset-title">Reset?</p>
@@ -488,9 +496,14 @@
     </div>
   </div>
 
+  <!-- Hand-Auswahl -->
   <div class="hand-overlay" id="handOverlay">
     <div class="hand-dialog">
-      <p class="hand-dialog-title">Wähle deine Hand</p>
+      <p class="hand-dialog-title">Wählt eure Hände</p>
+      <p style="font-size:0.85rem; margin:0 0 10px; text-align:center;">
+        Vor Spielbeginn einigt ihr euch darauf, wer welche der vier Handgesten nimmt.
+        Jede Hand wird nur einmal vergeben.
+      </p>
       <div class="hand-grid">
         <button class="hand-option" data-hand="🖐">
           <span class="hand-symbol">🖐</span>
@@ -528,24 +541,46 @@
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
-        <!-- Scrollbare Anleitung mit Bildern -->
+        <!-- Scrollbare Spielanleitung -->
         <div class="rules-container" id="rulesContainer">
           <div class="rules-text">
-            <h2>📙 SPIELANLEITUNG – KIPP SMILEY</h2>
+            <h2>KIPP SMILEY – Grunddaten</h2>
+            <p><strong>Spieleranzahl:</strong> 1–6</p>
+            <p><strong>Altersempfehlung:</strong> ab 7 Jahren</p>
+            <p><strong>Spieldauer:</strong> ca. 20 Minuten pro Partie</p>
+            <p><strong>Spielkategorie:</strong> Logik- &amp; Merkspiel (Hybrid: Physisch + App)</p>
 
             <div class="rules-separator"></div>
 
-            <h3>1. Rahmen auflegen</h3>
-            <!-- Bild 1: Dateiname im Repo anpassen -->
-            <img src="rahmen.jpg" alt="Rahmen auf der Box" class="rules-img" />
-            <p>Rahmen auflegen. Ausrichtung/wie gedreht egal.</p>
+            <h3>Spielmaterial</h3>
+            <img src="spielmaterial.jpg" alt="Spielmaterial KIPP SMILEY" class="rules-img" />
+            <ul>
+              <li>1 KIPP-Box</li>
+              <li>1 KIPP-Würfel</li>
+              <li>1 Kartonrahmen</li>
+              <li>12 Smiley-Knöpfe</li>
+              <li>1 Holzkugel</li>
+              <li>Smartphone/Tablet mit der KIPP-SMILEY-App</li>
+            </ul>
 
             <div class="rules-separator"></div>
 
-            <h3>2. Kugel und KIPP-Würfel einlegen</h3>
-            <!-- Bild 2: Dateiname im Repo anpassen -->
-            <img src="kugel_wuerfel.jpg" alt="Kugel und KIPP-Würfel in der Box" class="rules-img" />
-            <p>Kugel in das Loch des Boxbodens legen und KIPP-Würfel mit der abgeschrägten Kante an der Kugel anliegend in eine beliebige Ecke der Box setzen.</p>
+            <h3>Vorbereitung</h3>
+
+            <h3>Rahmen auflegen</h3>
+            <img src="rahmen.jpg" alt="Rahmen auflegen" class="rules-img" />
+            <p>Lege den Kartonrahmen mit den Smiley-Händen nach oben auf die umlaufende Auflagefläche der Box.</p>
+            <p>Die Drehrichtung ist egal – der Rahmen kann beliebig aufgesetzt werden.</p>
+
+            <div class="rules-separator"></div>
+
+            <h3>Kugel &amp; Würfel einsetzen</h3>
+            <img src="kugel.jpg" alt="Kugel in der Box" class="rules-img" />
+            <img src="wuerfel.jpg" alt="Würfel an der Kugel" class="rules-img" />
+            <p>Lege die Holzkugel in das Loch am Boden der KIPP-Box.</p>
+            <p>Setze den KIPP-Würfel so in eine beliebige Box-Ecke, dass die abgeschrägte Würfelkante an der Kugel anliegt.</p>
+
+            <!-- hier folgen später Zugfolge, Punktevergabe usw. -->
           </div>
         </div>
 
@@ -560,6 +595,7 @@
 
   <div class="score-area">
     <div class="score-big" id="pointsDisplay">0</div>
+    <div class="moves-text" id="movesDisplay">Züge: 0/6</div>
     <div class="start-row">
       <button class="start-btn start-btn-start" id="btnStart">starten</button>
       <button class="start-btn start-btn-close" id="btnClose">schließen</button>
@@ -584,12 +620,16 @@ let headClicked = false;
 let handClicked = false;
 let currentFace = null;
 
+let moveCount = 0;
+const maxMoves = 6;
+
 const faceEl = document.getElementById("smileyFace");
 const handEl = document.getElementById("smileyHand");
 const comboRow = document.getElementById("comboRow");
 const cardMessage = document.getElementById("cardMessage");
 const rulesContainer = document.getElementById("rulesContainer");
 const pointsDisplay = document.getElementById("pointsDisplay");
+const movesDisplay = document.getElementById("movesDisplay");
 const btnStart = document.getElementById("btnStart");
 const infoIcon = document.getElementById("infoIcon");
 
@@ -629,11 +669,14 @@ function clearSelectionFlags() {
 
 function applyFistRotationToElement(el) {
   if (el.textContent === "👊") {
-    /* 90° gegen den Uhrzeigersinn – Daumen rechts oben */
     el.style.transform = "rotate(-90deg)";
   } else {
     el.style.transform = "none";
   }
+}
+
+function updateMovesDisplay() {
+  movesDisplay.textContent = `Züge: ${moveCount}/${maxMoves}`;
 }
 
 function newCombo(){
@@ -667,10 +710,12 @@ function showWinScreen(){
 
 function checkLuckPoint() {
   if (!gameStarted || gameWon || rulesVisible) return;
+  if (moveCount >= maxMoves) return;
 
   if (headClicked && handClicked) {
     points += 1;
     pointsDisplay.textContent = points;
+    clearSelectionFlags();
     if (points >= 16) {
       showWinScreen();
       return;
@@ -679,12 +724,12 @@ function checkLuckPoint() {
   }
 }
 
+/* Hand-Auswahl */
 handOptions.forEach(btn => {
   const symbolSpan = btn.querySelector(".hand-symbol");
   const handChar = symbolSpan.textContent;
 
   if (handChar === "👊") {
-    /* Auswahl-Faust ebenso gegen den Uhrzeigersinn drehen */
     symbolSpan.style.transform = "rotate(-90deg)";
   }
 
@@ -711,7 +756,9 @@ function startGame() {
   gameStarted = true;
   gameWon = false;
   points = 0;
+  moveCount = 0;
   pointsDisplay.textContent = "0";
+  updateMovesDisplay();
   cardMessage.innerHTML = "";
   comboRow.style.display = "flex";
   handEl.style.display = "inline-block";
@@ -746,7 +793,11 @@ resetConfirm.onclick = () => {
   gameWon = false;
   gameStarted = false;
   points = 0;
+  moveCount = 0;
+  selectedHand = null;
+  tempSelectedHand = null;
   pointsDisplay.textContent = "0";
+  updateMovesDisplay();
   handEl.style.display = "inline-block";
   handEl.style.transform = "none";
   faceEl.textContent = "😀";
@@ -766,6 +817,7 @@ document.getElementById("btnClose").onclick = () => {
 
 faceEl.onclick = () => {
   if(!gameStarted || gameWon || rulesVisible) return;
+  if (moveCount >= maxMoves) return;
   headClicked = !headClicked;
   faceEl.classList.toggle("selected", headClicked);
   checkLuckPoint();
@@ -773,6 +825,7 @@ faceEl.onclick = () => {
 
 handEl.onclick = () => {
   if(!gameStarted || gameWon || rulesVisible) return;
+  if (moveCount >= maxMoves) return;
   handClicked = !handClicked;
   handEl.classList.toggle("selected", handClicked);
   checkLuckPoint();
@@ -780,6 +833,7 @@ handEl.onclick = () => {
 
 document.getElementById("btnOwn").onclick = () => {
   if(!gameStarted || gameWon || rulesVisible) return;
+  if (moveCount >= maxMoves) return;
 
   if (headClicked) {
     points += 3;
@@ -788,8 +842,17 @@ document.getElementById("btnOwn").onclick = () => {
   }
   pointsDisplay.textContent = points;
 
+  moveCount++;
+  updateMovesDisplay();
+
   if(points >= 16){
     showWinScreen();
+    return;
+  }
+
+  if (moveCount >= maxMoves) {
+    cardMessage.innerHTML = "<strong>KIPP STOPP – deine 6 Zugfolgen sind aufgebraucht.</strong>";
+    clearSelectionFlags();
     return;
   }
 
@@ -798,7 +861,15 @@ document.getElementById("btnOwn").onclick = () => {
 
 document.getElementById("btnFail").onclick = () => {
   if(!gameStarted || gameWon || rulesVisible) return;
+  if (moveCount >= maxMoves) return;
+
   clearSelectionFlags();
+  moveCount++;
+  updateMovesDisplay();
+
+  if (moveCount >= maxMoves) {
+    cardMessage.innerHTML = "<strong>KIPP STOPP – deine 6 Zugfolgen sind aufgebraucht.</strong>";
+  }
 };
 
 infoIcon.onclick = () => {
@@ -825,6 +896,8 @@ infoIcon.onclick = () => {
     }
   }
 };
+
+updateMovesDisplay();
 </script>
 
 </body>
