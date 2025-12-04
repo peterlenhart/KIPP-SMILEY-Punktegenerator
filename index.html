@@ -222,6 +222,16 @@
 
     .rules-text p { margin: 4px 0; }
 
+    /* hängender Einzug bei Bulletpoints */
+    .rules-text p.bullet {
+      padding-left: 1.4em;
+      text-indent: -1.4em;
+    }
+
+    .rules-text p.points-heading {
+      margin: 18px 0 10px 0;
+    }
+
     .rules-separator {
       margin: 8px 0;
       border-top: 1px solid rgba(148,163,184,0.4);
@@ -604,10 +614,10 @@
             <div class="rules-separator"></div>
 
             <h3>Spielmaterial:</h3>
-            <p>• 1 KIPP-Box (140x140x70 mm)</p>
-            <p>• 1 KIPP-Würfel (70x70x70 mm)</p>
-            <p>• 1 Kartonrahmen, 12 Smiley-Knöpfe (Dm 16 mm), 1 Holzkugel (Dm 15 mm)</p>
-            <p>• Smartphone/Tablet mit der KIPP-SMILEY-App</p>
+            <p class="bullet">• 1 KIPP-Box (140x140x70 mm)</p>
+            <p class="bullet">• 1 KIPP-Würfel (70x70x70 mm)</p>
+            <p class="bullet">• 1 Kartonrahmen, 12 Smiley-Knöpfe (⌀ 16 mm), 1 Holzkugel (⌀ 15 mm)</p>
+            <p class="bullet">• Smartphone/Tablet mit der KIPP-SMILEY-App</p>
 
             <div class="rules-separator"></div>
 
@@ -694,18 +704,18 @@
 
             <h3>Automatische Punkte-Vergabe</h3>
 
-            <p><strong>3 Punkte</strong></p>
+            <p class="points-heading"><strong>3 Punkte</strong></p>
             <p>Wenn der Smileykopf offen aufliegt.<br>
             Mit Logik recht leicht lösbar.<br>
             In 1 von 3 Fällen liegt der Würfel so.</p>
 
-            <p><strong>0 Punkte</strong></p>
+            <p class="points-heading"><strong>0 Punkte</strong></p>
             <p>Wenn der Smileykopf zusätzlich an der richtigen Hand liegt.<br>
             Die einzige von 48 möglichen Würfel-Ausgangslagen,<br>
             die nicht erkippbar ist.<br>
             Pech gehabt, aussetzen.</p>
 
-            <p><strong>5 Punkte</strong></p>
+            <p class="points-heading"><strong>5 Punkte</strong></p>
             <p>Wenn der Kopf verdeckt liegt.<br>
             Gedächtnisleistung, Aufmerksamkeit und räumliche Vorstellung.<br>
             In 2 von 3 Fällen liegt der Würfel so.</p>
@@ -1130,7 +1140,7 @@ infoIcon.onclick = () => {
     comboRow.style.display = "none";
     cardMessage.style.display = "none";
     rulesContainer.style.display = "block";
-    pointsPopup.style.display = "none";   // << Schwarzer Balken weg
+    pointsPopup.style.display = "none";
   } else {
     infoIcon.classList.remove("show-close");
     rulesContainer.style.display = "none";
@@ -1139,7 +1149,7 @@ infoIcon.onclick = () => {
       cardMessage.innerHTML = "";
       cardMessage.style.display = "block";
       comboRow.style.display = "flex";
-      pointsPopup.style.display = "flex";  // << Popup-Fläche wieder da
+      pointsPopup.style.display = "flex";
     } else {
       cardMessage.innerHTML =
         "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
