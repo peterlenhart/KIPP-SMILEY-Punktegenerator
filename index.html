@@ -907,7 +907,6 @@ function checkSetzeAus() {
   if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (!(headClicked && handClicked)) return;
 
-  // Sonderfall: Kopf + Hand = nicht erkippbar, Pech gehabt, aussetzen
   isSetzeAusPhase = true;
   moves += 1;
   updateMoves();
@@ -968,6 +967,7 @@ function startGame() {
   clearSelections();
   comboRow.style.display = "flex";
   cardMessage.innerHTML = "";
+  pointsPopup.style.display = "flex";
   showNormalCombo();
 
   btnStart.textContent = "Reset";
@@ -1020,6 +1020,7 @@ resetConfirm.onclick = () => {
   }
   pointsPopup.classList.remove("visible");
   pointsPopup.innerHTML = "";
+  pointsPopup.style.display = "flex";
 
   cardMessage.innerHTML =
     "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
@@ -1069,15 +1070,12 @@ document.getElementById("btnOwn").onclick = () => {
   let changeFace = false;
 
   if (headClicked && !handClicked) {
-    // Kopf geklickt, Hand nicht -> 3 Punkte
     addPoints = 3;
     changeFace = true;
   } else if (!headClicked && !handClicked) {
-    // nichts geklickt -> 5 Punkte
     addPoints = 5;
     changeFace = true;
   } else if (headClicked && handClicked) {
-    // sollte in der Praxis schon von checkSetzeAus abgefangen sein
     addPoints = 0;
     subText = "setze aus!";
     changeFace = true;
@@ -1132,6 +1130,7 @@ infoIcon.onclick = () => {
     comboRow.style.display = "none";
     cardMessage.style.display = "none";
     rulesContainer.style.display = "block";
+    pointsPopup.style.display = "none";   // << Schwarzer Balken weg
   } else {
     infoIcon.classList.remove("show-close");
     rulesContainer.style.display = "none";
@@ -1140,11 +1139,13 @@ infoIcon.onclick = () => {
       cardMessage.innerHTML = "";
       cardMessage.style.display = "block";
       comboRow.style.display = "flex";
+      pointsPopup.style.display = "flex";  // << Popup-Fläche wieder da
     } else {
       cardMessage.innerHTML =
         "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
       cardMessage.style.display = "block";
       comboRow.style.display = "none";
+      pointsPopup.style.display = "flex";
     }
   }
 };
