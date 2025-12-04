@@ -116,7 +116,7 @@
       padding: 10px;
       text-align: center;
       overflow: hidden;
-      position: relative;
+      position: relative; /* wichtig für Vollflächen-Overlay */
     }
 
     .combo-row {
@@ -189,12 +189,36 @@
       margin-top: 2px;
     }
 
-    /* HIER: Unterzeile („setze aus!“) größer & fett */
+    /* Unterzeile („setze aus!“) */
     .points-sub {
       font-size: 1.15rem;
       font-weight: 700;
       color: #e5e7eb;
       margin-top: 4px;
+    }
+
+    /* Vollflächen-Variante für „setze aus!“ */
+    .points-popup.setze-aus {
+      position: absolute;
+      inset: 0;
+      background: #0b1220;
+      border-radius: 22px;
+      min-height: 0;
+      padding: 10px;
+    }
+
+    .points-popup.setze-aus .points-number {
+      font-size: 3.2rem;
+    }
+
+    .points-popup.setze-aus .points-label {
+      font-size: 1.1rem;
+      margin-top: 6px;
+    }
+
+    .points-popup.setze-aus .points-sub {
+      font-size: 1.6rem;
+      margin-top: 10px;
     }
 
     .rules-container {
@@ -893,6 +917,7 @@ function showKippStopp() {
   cardMessage.innerHTML = `<div class="kippstopp-title">KIPP STOPP</div>`;
 }
 
+/* Punkte-Popup allgemein + „setze aus!“ Vollfläche */
 function showPointsPopup(value, {
   subText = null,
   changeFaceAfter = false,
@@ -905,6 +930,8 @@ function showPointsPopup(value, {
     pointsTimeout = null;
   }
 
+  const isSetzeAus = (subText === "setze aus!");
+
   pointsPopup.innerHTML =
     `<div class="points-number">${value}</div>
      <div class="points-label">Punkte</div>` +
@@ -913,10 +940,29 @@ function showPointsPopup(value, {
   if (headClicked) faceEl.classList.add("fade-out");
   if (handClicked) handEl.classList.add("fade-out");
 
+  /* Setze-aus: Vollflächen-Look, aber nur wenn kein KIPP STOPP */
+  if (isSetzeAus && !kippStopp) {
+    pointsPopup.classList.add("setze-aus");
+    comboRow.style.display = "none";
+    cardMessage.style.display = "none";
+  } else {
+    pointsPopup.classList.remove("setze-aus");
+  }
+
   pointsPopup.classList.add("visible");
+
+  const duration = isSetzeAus ? 8000 : 2000;
 
   pointsTimeout = setTimeout(() => {
     pointsPopup.classList.remove("visible");
+
+    if (isSetzeAus) {
+      pointsPopup.classList.remove("setze-aus");
+      /* Nach Setze-aus wieder normaler Zustand:
+         - neue Kippvorgabe nur, wenn gewünscht
+         - sonst bleibt KIPP STOPP etc. erhalten */
+    }
+
     clearSelections();
 
     if (changeFaceAfter && !kippStopp && gameStarted && !rulesVisible) {
@@ -926,9 +972,10 @@ function showPointsPopup(value, {
     if (typeof onDone === "function") {
       onDone();
     }
-  }, 2000);
+  }, duration);
 }
 
+/* Setze-aus-Logik bei Kopf+Hand voraus angeklickt */
 function checkSetzeAus() {
   if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (!(headClicked && handClicked)) return;
@@ -1018,6 +1065,7 @@ btnStart.onclick = () => {
 
   if (!gameStarted) {
     if (!selectedHand) {
+      clearHandOverlaySelection();      // WICHTIG: alte Markierung weg
       handOverlay.style.display = "flex";
       return;
     }
@@ -1044,8 +1092,7 @@ resetConfirm.onclick = () => {
   updateMoves();
 
   selectedHand = null;
-  /* HIER: Hand-Overlay-Auswahl wirklich mit-resetten */
-  clearHandOverlaySelection();
+  clearHandOverlaySelection();  // Hand-Auswahl komplett mit-resetten
 
   clearSelections();
   handEl.style.display = "inline-block";
@@ -1059,6 +1106,7 @@ resetConfirm.onclick = () => {
     pointsTimeout = null;
   }
   pointsPopup.classList.remove("visible");
+  pointsPopup.classList.remove("setze-aus");
   pointsPopup.innerHTML = "";
   pointsPopup.style.display = "flex";
 
@@ -1175,17 +1223,17 @@ infoIcon.onclick = () => {
     infoIcon.classList.remove("show-close");
     rulesContainer.style.display = "none";
 
+    pointsPopup.style.display = "flex";
+
     if (gameStarted) {
       cardMessage.innerHTML = "";
       cardMessage.style.display = "block";
       comboRow.style.display = "flex";
-      pointsPopup.style.display = "flex";
     } else {
       cardMessage.innerHTML =
         "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
       cardMessage.style.display = "block";
       comboRow.style.display = "none";
-      pointsPopup.style.display = "flex";
     }
   }
 };
