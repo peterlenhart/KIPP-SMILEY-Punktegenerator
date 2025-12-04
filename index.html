@@ -189,10 +189,12 @@
       margin-top: 2px;
     }
 
+    /* HIER: Unterzeile („setze aus!“) größer & fett */
     .points-sub {
-      font-size: 0.9rem;
+      font-size: 1.15rem;
+      font-weight: 700;
       color: #e5e7eb;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .rules-container {
@@ -439,7 +441,7 @@
       position: relative;
     }
 
-    /* kleiner Querstrich zum „Runterziehen“ / Schließen */
+    /* kleiner Querstrich */
     .hand-dialog::before {
       content: "";
       display: block;
@@ -1042,7 +1044,8 @@ resetConfirm.onclick = () => {
   updateMoves();
 
   selectedHand = null;
-  tempSelectedHand = null;
+  /* HIER: Hand-Overlay-Auswahl wirklich mit-resetten */
+  clearHandOverlaySelection();
 
   clearSelections();
   handEl.style.display = "inline-block";
