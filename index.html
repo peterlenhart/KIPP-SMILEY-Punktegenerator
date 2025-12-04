@@ -436,6 +436,19 @@
       padding: 18px;
       width: min(90vw, 360px);
       border: 1px solid rgba(148,163,184,0.7);
+      position: relative;
+    }
+
+    /* kleiner Querstrich zum „Runterziehen“ / Schließen */
+    .hand-dialog::before {
+      content: "";
+      display: block;
+      width: 46px;
+      height: 4px;
+      background: #4b5563;
+      border-radius: 999px;
+      margin: 0 auto 10px;
+      opacity: 0.9;
     }
 
     .hand-dialog-title {
@@ -609,8 +622,8 @@
 
             <p><strong>Spieleranzahl:</strong> 1–4</p>
             <p><strong>Altersempfehlung:</strong> ab 9 Jahren</p>
-            <p><strong>Spielkategorie:</strong> Logik- &amp; Merkspiel (Hybrid: Physisch + App)</p>
             <p><strong>Spieldauer:</strong> ca. 20 Minuten</p>
+            <p><strong>Spielkategorie:</strong> Logik- &amp; Merkspiel (Hybrid: Physisch + App)</p>
 
             <div class="rules-separator"></div>
 
@@ -938,6 +951,12 @@ function checkSetzeAus() {
 }
 
 /* Hand-Auswahl-Overlay */
+
+function clearHandOverlaySelection() {
+  tempSelectedHand = null;
+  handOptions.forEach(b => b.classList.remove("active"));
+}
+
 handOptions.forEach(btn => {
   const symbolSpan = btn.querySelector(".hand-symbol");
   const handChar = symbolSpan.textContent;
@@ -961,9 +980,16 @@ handConfirm.onclick = () => {
 };
 
 handReset.onclick = () => {
-  tempSelectedHand = null;
-  handOptions.forEach(b => b.classList.remove("active"));
+  clearHandOverlaySelection();
 };
+
+/* Overlay durch Tippen außerhalb schließen */
+handOverlay.addEventListener("click", (e) => {
+  if (e.target === handOverlay) {
+    handOverlay.style.display = "none";
+    clearHandOverlaySelection();
+  }
+});
 
 /* Start-Logik */
 function startGame() {
@@ -990,9 +1016,6 @@ btnStart.onclick = () => {
 
   if (!gameStarted) {
     if (!selectedHand) {
-      // Overlay immer „frisch“ öffnen
-      tempSelectedHand = null;
-      handOptions.forEach(b => b.classList.remove("active"));
       handOverlay.style.display = "flex";
       return;
     }
@@ -1020,7 +1043,6 @@ resetConfirm.onclick = () => {
 
   selectedHand = null;
   tempSelectedHand = null;
-  handOptions.forEach(b => b.classList.remove("active"));
 
   clearSelections();
   handEl.style.display = "inline-block";
