@@ -370,6 +370,56 @@
 
     .menu-close-btn:hover { background: #dc2626; }
 
+    /* Video-Overlay */
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .video-box {
+      background: #0f172a;
+      border-radius: 20px;
+      padding: 14px 14px 12px;
+      width: min(95vw, 420px);
+      border: 1px solid rgba(148,163,184,0.7);
+      text-align: center;
+    }
+
+    .video-title {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .video-box video {
+      width: 100%;
+      border-radius: 12px;
+      max-height: 70vh;
+    }
+
+    .video-close-btn {
+      margin-top: 10px;
+      width: 100%;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 10px 8px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .video-close-btn:hover {
+      background: #dc2626;
+    }
+
     /* Hand-Auswahl-Overlay */
     .hand-overlay {
       position: fixed;
@@ -490,6 +540,14 @@
         ⬇️ PDF herunterladen
       </button>
 
+      <button onclick="openVideo('im')" class="menu-item">
+        ▶️ Video: Kippen im Uhrzeigersinn
+      </button>
+
+      <button onclick="openVideo('gegen')" class="menu-item">
+        ▶️ Video: Kippen gegen den Uhrzeigersinn
+      </button>
+
       <button onclick="window.location.href='mailto:office@p-lenhart.at'" class="menu-item">
         Kontakt: Peter Lenhart
       </button>
@@ -497,6 +555,15 @@
       <button class="menu-close-btn" onclick="closeMenu()">
         schließen
       </button>
+    </div>
+  </div>
+
+  <!-- Video-Overlay -->
+  <div class="video-overlay" id="videoOverlay">
+    <div class="video-box">
+      <p class="video-title" id="videoTitle"></p>
+      <video id="helpVideo" controls playsinline></video>
+      <button class="video-close-btn" onclick="closeVideo()">Video schließen</button>
     </div>
   </div>
 
@@ -760,6 +827,11 @@ const handOptions = document.querySelectorAll(".hand-option");
 const handConfirm = document.getElementById("handConfirm");
 const handReset = document.getElementById("handReset");
 
+/* Video-Overlay */
+const videoOverlay = document.getElementById("videoOverlay");
+const helpVideo = document.getElementById("helpVideo");
+const videoTitle = document.getElementById("videoTitle");
+
 /* Menü */
 document.getElementById("menuBtn").onclick = () =>
   document.getElementById("menuOverlay").style.display = "flex";
@@ -775,6 +847,28 @@ function openRulesScroll() {
 
 function openRulesPdf() {
   window.open('KIPP_Smiley_Spielanleitung.PDF?v=2', '_blank');
+}
+
+function openVideo(direction) {
+  closeMenu();
+
+  if (direction === 'im') {
+    helpVideo.src = 'im_uhrzs.mp4';
+    videoTitle.textContent = 'Kippen IM Uhrzeigersinn';
+  } else {
+    helpVideo.src = 'gegen_uhrzs.mp4';
+    videoTitle.textContent = 'Kippen GEGEN den Uhrzeigersinn';
+  }
+
+  videoOverlay.style.display = 'flex';
+  helpVideo.load();
+  // Autoplay kann auf manchen Geräten blockiert werden, ist aber einen Versuch wert:
+  helpVideo.play().catch(() => {});
+}
+
+function closeVideo() {
+  helpVideo.pause();
+  videoOverlay.style.display = 'none';
 }
 
 /* Hilfsfunktionen */
