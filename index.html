@@ -989,6 +989,9 @@ btnStart.onclick = () => {
 
   if (!gameStarted) {
     if (!selectedHand) {
+      // >>> NEU: Overlay immer ohne alte Markierung öffnen
+      tempSelectedHand = null;
+      handOptions.forEach(b => b.classList.remove("active"));
       handOverlay.style.display = "flex";
       return;
     }
@@ -1016,6 +1019,8 @@ resetConfirm.onclick = () => {
 
   selectedHand = null;
   tempSelectedHand = null;
+  // >>> NEU: alle grünen Hand-Markierungen entfernen
+  handOptions.forEach(b => b.classList.remove("active"));
 
   clearSelections();
   handEl.style.display = "inline-block";
