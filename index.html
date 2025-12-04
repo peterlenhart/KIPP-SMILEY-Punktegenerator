@@ -112,7 +112,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+      gap: 12px;
       padding: 10px;
       text-align: center;
       overflow: hidden;
@@ -143,6 +143,12 @@
     .smiley-hand.selected {
       outline: 3px solid #facc15;
       border-radius: 999px;
+      transition: outline-color 0.6s ease;
+    }
+
+    .smiley-face.selected.fade-out,
+    .smiley-hand.selected.fade-out {
+      outline-color: transparent;
     }
 
     .card-message {
@@ -152,6 +158,41 @@
       color: #f8fafc;
       line-height: 1.35;
       padding: 0 6px;
+    }
+
+    /* Punkte-Popup unter der Kippvorgabe */
+    .points-popup {
+      min-height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .points-popup.visible {
+      opacity: 1;
+    }
+
+    .points-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #ffc93b;
+      line-height: 1;
+    }
+
+    .points-label {
+      font-size: 1rem;
+      color: #f9fafb;
+      margin-top: 2px;
+    }
+
+    .points-sub {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      margin-top: 2px;
     }
 
     .rules-container {
@@ -169,14 +210,14 @@
       font-size: 1.15rem;
       margin: 0 0 6px;
       font-weight: 800;
-      color: #ffc93b; /* Smiley-Orange-Gelb */
+      color: #ffc93b;
     }
 
     .rules-text h3 {
       font-size: 1.0rem;
       margin: 10px 0 4px;
       font-weight: 700;
-      color: #ffc93b; /* Smiley-Orange-Gelb */
+      color: #ffc93b;
     }
 
     .rules-text p { margin: 4px 0; }
@@ -324,7 +365,6 @@
       color: #451a03;
     }
 
-    /* Menü */
     .menu-box {
       background: #0f172a;
       padding: 22px 18px;
@@ -370,57 +410,6 @@
 
     .menu-close-btn:hover { background: #dc2626; }
 
-    /* Video-Overlay */
-    .video-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 50;
-      padding: 16px;
-    }
-
-    .video-box {
-      background: #0f172a;
-      border-radius: 20px;
-      padding: 14px 14px 12px;
-      width: min(95vw, 420px);
-      border: 1px solid rgba(148,163,184,0.7);
-      text-align: center;
-    }
-
-    .video-title {
-      margin: 0 0 10px;
-      font-size: 1.1rem;
-      font-weight: 800;
-    }
-
-    .video-box video {
-      width: 100%;
-      border-radius: 12px;
-      max-height: 70vh;
-    }
-
-    .video-close-btn {
-      margin-top: 10px;
-      width: 100%;
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      padding: 10px 8px;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .video-close-btn:hover {
-      background: #dc2626;
-    }
-
-    /* Hand-Auswahl-Overlay */
     .hand-overlay {
       position: fixed;
       inset: 0;
@@ -493,7 +482,6 @@
     .hand-confirm { background: #22c55e; color: #022c22; }
     .hand-reset { background: #111827; color: #e5e7eb; border: 1px solid #4b5563; }
 
-    /* Glückskipp & KIPP STOPP Text */
     .luck-title {
       font-size: 1.3rem;
       font-weight: 800;
@@ -527,7 +515,6 @@
   <div class="hamburger" id="menuBtn">☰</div>
   <div class="info-icon" id="infoIcon">📙</div>
 
-  <!-- Menü -->
   <div class="menu-overlay" id="menuOverlay">
     <div class="menu-box">
       <h3 class="menu-title">Menü</h3>
@@ -540,14 +527,6 @@
         ⬇️ PDF herunterladen
       </button>
 
-      <button onclick="openVideo('im')" class="menu-item">
-        ▶️ Video: Kippen im Uhrzeigersinn
-      </button>
-
-      <button onclick="openVideo('gegen')" class="menu-item">
-        ▶️ Video: Kippen gegen den Uhrzeigersinn
-      </button>
-
       <button onclick="window.location.href='mailto:office@p-lenhart.at'" class="menu-item">
         Kontakt: Peter Lenhart
       </button>
@@ -558,16 +537,6 @@
     </div>
   </div>
 
-  <!-- Video-Overlay -->
-  <div class="video-overlay" id="videoOverlay">
-    <div class="video-box">
-      <p class="video-title" id="videoTitle"></p>
-      <video id="helpVideo" controls playsinline></video>
-      <button class="video-close-btn" onclick="closeVideo()">Video schließen</button>
-    </div>
-  </div>
-
-  <!-- Reset-Dialog -->
   <div class="reset-overlay" id="resetOverlay">
     <div class="reset-dialog">
       <p class="reset-title">Reset?</p>
@@ -581,7 +550,6 @@
     </div>
   </div>
 
-  <!-- Hand-Auswahl -->
   <div class="hand-overlay" id="handOverlay">
     <div class="hand-dialog">
       <p class="hand-dialog-title">Wähle deine Hand</p>
@@ -617,12 +585,13 @@
           <div class="smiley-face" id="smileyFace">😀</div>
         </div>
 
+        <div class="points-popup" id="pointsPopup"></div>
+
         <div class="card-message" id="cardMessage">
           📙 = Scrollbare Spielanleitung.<br><br>
           ☰ = PDF-Spielanleitung herunterladen.
         </div>
 
-        <!-- Scrollbare Spielanleitung -->
         <div class="rules-container" id="rulesContainer">
           <div class="rules-text">
 
@@ -800,14 +769,12 @@ let tempSelectedHand = null;
 
 let headClicked = false;
 let handClicked = false;
-let isLuckKipp = false;
-let luckRoll = null;
 let kippStopp = false;
+let isSetzeAusPhase = false;
 
 const maxMoves = 6;
 let moves = 0;
 
-/* DOM-Elemente */
 const faceEl = document.getElementById("smileyFace");
 const handEl = document.getElementById("smileyHand");
 const comboRow = document.getElementById("comboRow");
@@ -819,18 +786,16 @@ const btnStart = document.getElementById("btnStart");
 const infoIcon = document.getElementById("infoIcon");
 
 const resetOverlay = document.getElementById("resetOverlay");
-const resetCancel = document.getElementById("resetCancel");
-const resetConfirm = document.getElementById("resetConfirm");
+const resetCancel   = document.getElementById("resetCancel");
+const resetConfirm  = document.getElementById("resetConfirm");
 
-const handOverlay = document.getElementById("handOverlay");
-const handOptions = document.querySelectorAll(".hand-option");
-const handConfirm = document.getElementById("handConfirm");
-const handReset = document.getElementById("handReset");
+const handOverlay   = document.getElementById("handOverlay");
+const handOptions   = document.querySelectorAll(".hand-option");
+const handConfirm   = document.getElementById("handConfirm");
+const handReset     = document.getElementById("handReset");
 
-/* Video-Overlay */
-const videoOverlay = document.getElementById("videoOverlay");
-const helpVideo = document.getElementById("helpVideo");
-const videoTitle = document.getElementById("videoTitle");
+const pointsPopup   = document.getElementById("pointsPopup");
+let pointsTimeout   = null;
 
 /* Menü */
 document.getElementById("menuBtn").onclick = () =>
@@ -849,28 +814,6 @@ function openRulesPdf() {
   window.open('KIPP_Smiley_Spielanleitung.PDF?v=2', '_blank');
 }
 
-function openVideo(direction) {
-  closeMenu();
-
-  if (direction === 'im') {
-    helpVideo.src = 'im_uhrzs.mp4';
-    videoTitle.textContent = 'Kippen IM Uhrzeigersinn';
-  } else {
-    helpVideo.src = 'gegen_uhrzs.mp4';
-    videoTitle.textContent = 'Kippen GEGEN den Uhrzeigersinn';
-  }
-
-  videoOverlay.style.display = 'flex';
-  helpVideo.load();
-  // Autoplay kann auf manchen Geräten blockiert werden, ist aber einen Versuch wert:
-  helpVideo.play().catch(() => {});
-}
-
-function closeVideo() {
-  helpVideo.pause();
-  videoOverlay.style.display = 'none';
-}
-
 /* Hilfsfunktionen */
 function randomInt(max){ return Math.floor(Math.random()*max); }
 
@@ -881,10 +824,8 @@ function updateMoves() {
 function clearSelections() {
   headClicked = false;
   handClicked = false;
-  isLuckKipp = false;
-  luckRoll = null;
-  faceEl.classList.remove("selected");
-  handEl.classList.remove("selected");
+  faceEl.classList.remove("selected", "fade-out");
+  handEl.classList.remove("selected", "fade-out");
 }
 
 function applyHandRotation(el) {
@@ -910,30 +851,6 @@ function showNormalCombo() {
   faceEl.style.fontSize = "5.2rem";
 }
 
-function triggerLuckKipp() {
-  if (!gameStarted || kippStopp || isLuckKipp) return;
-
-  isLuckKipp = true;
-
-  // 1 Glückspunkt vorweg
-  points += 1;
-  pointsDisplay.textContent = points;
-
-  // neuer Kopf (möglichst anderer)
-  let newFace;
-  do {
-    newFace = faces[randomInt(faces.length)];
-  } while (faces.length > 1 && newFace === faceEl.textContent);
-  faceEl.textContent = newFace;
-
-  // Zufalls-Kippzahl
-  luckRoll = 1 + randomInt(6);
-
-  cardMessage.innerHTML =
-    `<div class="luck-title">GLÜCKSKIPP</div>
-     <div class="luck-text">Kippe <span class="luck-number">${luckRoll}</span>-mal in eine beliebige Richtung.</div>`;
-}
-
 function showKippStopp() {
   kippStopp = true;
   clearSelections();
@@ -950,11 +867,64 @@ function showKippStopp() {
   cardMessage.innerHTML = `<div class="kippstopp-title">KIPP STOPP</div>`;
 }
 
-function finishMove(goesOn) {
-  clearSelections();
-  if (goesOn) {
-    showNormalCombo();
+function showPointsPopup(value, {
+  subText = null,
+  changeFaceAfter = false,
+  onDone = null
+} = {}) {
+  if (!pointsPopup) return;
+
+  if (pointsTimeout) {
+    clearTimeout(pointsTimeout);
+    pointsTimeout = null;
   }
+
+  pointsPopup.innerHTML =
+    `<div class="points-number">${value}</div>
+     <div class="points-label">Punkte</div>` +
+    (subText ? `<div class="points-sub">${subText}</div>` : "");
+
+  if (headClicked) faceEl.classList.add("fade-out");
+  if (handClicked) handEl.classList.add("fade-out");
+
+  pointsPopup.classList.add("visible");
+
+  pointsTimeout = setTimeout(() => {
+    pointsPopup.classList.remove("visible");
+    clearSelections();
+
+    if (changeFaceAfter && !kippStopp && gameStarted && !rulesVisible) {
+      showNormalCombo();
+    }
+
+    if (typeof onDone === "function") {
+      onDone();
+    }
+  }, 2000);
+}
+
+function checkSetzeAus() {
+  if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
+  if (!(headClicked && handClicked)) return;
+
+  // Sonderfall: Kopf + Hand = nicht erkippbar, Pech gehabt, aussetzen
+  isSetzeAusPhase = true;
+  moves += 1;
+  updateMoves();
+
+  const allowNewFace = (moves < maxMoves);
+
+  if (moves >= maxMoves) {
+    showKippStopp();
+  }
+
+  showPointsPopup(0, {
+    subText: "setze aus!",
+    changeFaceAfter: allowNewFace,
+    onDone: () => {
+      isSetzeAusPhase = false;
+    }
+  });
 }
 
 /* Hand-Auswahl-Overlay */
@@ -989,6 +959,7 @@ handReset.onclick = () => {
 function startGame() {
   gameStarted = true;
   kippStopp = false;
+  isSetzeAusPhase = false;
   points = 0;
   moves = 0;
   pointsDisplay.textContent = "0";
@@ -1027,6 +998,7 @@ resetConfirm.onclick = () => {
 
   gameStarted = false;
   kippStopp = false;
+  isSetzeAusPhase = false;
   points = 0;
   moves = 0;
   pointsDisplay.textContent = "0";
@@ -1041,6 +1013,13 @@ resetConfirm.onclick = () => {
   faceEl.textContent = "😀";
   faceEl.style.fontSize = "5.2rem";
   comboRow.style.display = "none";
+
+  if (pointsTimeout) {
+    clearTimeout(pointsTimeout);
+    pointsTimeout = null;
+  }
+  pointsPopup.classList.remove("visible");
+  pointsPopup.innerHTML = "";
 
   cardMessage.innerHTML =
     "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
@@ -1057,7 +1036,8 @@ document.getElementById("btnClose").onclick = () => {
 
 /* Kopf / Hand anklickbar */
 faceEl.onclick = () => {
-  if (!gameStarted || rulesVisible || kippStopp || isLuckKipp) return;
+  if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
+
   headClicked = !headClicked;
   faceEl.classList.toggle("selected", headClicked);
 
@@ -1066,48 +1046,68 @@ faceEl.onclick = () => {
     handEl.classList.remove("selected");
   }
 
-  if (headClicked && handClicked) {
-    triggerLuckKipp();
-  }
+  checkSetzeAus();
 };
 
 handEl.onclick = () => {
-  if (!gameStarted || rulesVisible || kippStopp || isLuckKipp) return;
+  if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (!headClicked) return;
 
   handClicked = !handClicked;
   handEl.classList.toggle("selected", handClicked);
 
-  if (headClicked && handClicked) {
-    triggerLuckKipp();
-  }
+  checkSetzeAus();
 };
 
 /* Buttons: erkippt / nicht erkippt */
 document.getElementById("btnOwn").onclick = () => {
-  if (!gameStarted || rulesVisible || kippStopp) return;
+  if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (moves >= maxMoves) return;
 
-  if (isLuckKipp) {
-    points += 7; // 1 Punkt gab es schon beim Auslösen
+  let addPoints = 0;
+  let subText = null;
+  let changeFace = false;
+
+  if (headClicked && !handClicked) {
+    // Kopf geklickt, Hand nicht -> 3 Punkte
+    addPoints = 3;
+    changeFace = true;
+  } else if (!headClicked && !handClicked) {
+    // nichts geklickt -> 5 Punkte
+    addPoints = 5;
+    changeFace = true;
+  } else if (headClicked && handClicked) {
+    // sollte in der Praxis schon von checkSetzeAus abgefangen sein
+    addPoints = 0;
+    subText = "setze aus!";
+    changeFace = true;
   } else {
-    points += headClicked ? 3 : 5;
+    addPoints = 0;
+    changeFace = false;
   }
-  pointsDisplay.textContent = points;
+
+  if (addPoints !== 0) {
+    points += addPoints;
+    pointsDisplay.textContent = points;
+  }
 
   moves += 1;
   updateMoves();
 
+  const allowNewFace = changeFace && (moves < maxMoves);
+
   if (moves >= maxMoves) {
     showKippStopp();
-    return;
   }
 
-  finishMove(true);
+  showPointsPopup(addPoints === 0 ? 0 : addPoints, {
+    subText,
+    changeFaceAfter: allowNewFace
+  });
 };
 
 document.getElementById("btnFail").onclick = () => {
-  if (!gameStarted || rulesVisible || kippStopp) return;
+  if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (moves >= maxMoves) return;
 
   moves += 1;
@@ -1115,10 +1115,12 @@ document.getElementById("btnFail").onclick = () => {
 
   if (moves >= maxMoves) {
     showKippStopp();
-    return;
   }
 
-  finishMove(true);
+  showPointsPopup(0, {
+    subText: null,
+    changeFaceAfter: false
+  });
 };
 
 /* Spielanleitung im Kombifeld ein-/ausblenden */
