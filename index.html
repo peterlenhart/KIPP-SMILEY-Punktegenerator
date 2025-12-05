@@ -764,20 +764,28 @@
             <h3>Automatische Punkte-Vergabe</h3>
 
             <p class="points-heading"><strong>3 Punkte</strong></p>
-            <p>Wenn der Smileykopf offen aufliegt.<br>
-            Mit Logik recht leicht lösbar.<br>
-            In 1 von 3 Fällen liegt der Würfel so.</p>
-
-            <p class="points-heading"><strong>0 Punkte</strong></p>
-            <p>Wenn der Smileykopf zusätzlich an der richtigen Hand liegt.<br>
-            Die einzige von 48 möglichen Würfel-Ausgangslagen,<br>
-            die nicht erkippbar ist.<br>
-            Pech gehabt, aussetzen.</p>
+            <p>
+              Sonderfall: Wenn der Smileykopf bereits offen liegt und
+              zusätzlich an deiner richtigen Hand liegt, ist deine
+              Kippvorgabe schon erfüllt, bevor du überhaupt kippst.
+              Diese einzige von 48 möglichen Ausgangslagen wird als
+              Glücksfall mit 3 Punkten belohnt – du setzt dafür einmal aus.
+            </p>
 
             <p class="points-heading"><strong>5 Punkte</strong></p>
-            <p>Wenn der Kopf verdeckt liegt.<br>
-            Gedächtnisleistung, Aufmerksamkeit und räumliche Vorstellung.<br>
-            In 2 von 3 Fällen liegt der Würfel so.</p>
+            <p>
+              Wenn der Kopf offen aufliegt und du deine Kippvorgabe
+              erkippt hast. Mit Logik und Merkfähigkeit gut lösbar,
+              da du den Kopf vor dem Kippen sehen konntest.
+            </p>
+
+            <p class="points-heading"><strong>8 Punkte</strong></p>
+            <p>
+              Wenn der Kopf vor dem Kippen nicht sichtbar war und du
+              deine Kippvorgabe trotzdem exakt erkippt hast.
+              Maximaler Logik-, Gedächtnis- und Glücksanteil –
+              die schwierigste und lukrativste Variante.
+            </p>
 
             <div class="rules-separator"></div>
 
@@ -1031,6 +1039,11 @@ function checkSetzeAus() {
   saveLastState();
 
   isSetzeAusPhase = true;
+
+  /* NEU: 3 Punkte für den Glücksfall + aussetzen */
+  points += 3;
+  pointsDisplay.textContent = points;
+
   moves += 1;
   updateMoves();
 
@@ -1040,7 +1053,7 @@ function checkSetzeAus() {
     showKippStopp();
   }
 
-  showPointsPopup(0, {
+  showPointsPopup(3, {
     subText: "setze aus!",
     changeFaceAfter: allowNewFace,
     onDone: () => {
@@ -1221,12 +1234,15 @@ document.getElementById("btnOwn").onclick = () => {
   let changeFace = false;
 
   if (headClicked && !handClicked) {
-    addPoints = 3;
-    changeFace = true;
-  } else if (!headClicked && !handClicked) {
+    /* NEU: 5 Punkte, wenn Kopf vorher sichtbar war */
     addPoints = 5;
     changeFace = true;
+  } else if (!headClicked && !handClicked) {
+    /* NEU: 8 Punkte, wenn Kopf vorher nicht sichtbar war */
+    addPoints = 8;
+    changeFace = true;
   } else if (headClicked && handClicked) {
+    /* Sicherheitsfall – regulär sollte dies schon in checkSetzeAus abgefangen sein */
     addPoints = 0;
     subText = "setze aus!";
     changeFace = true;
