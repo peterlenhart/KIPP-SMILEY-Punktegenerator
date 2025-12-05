@@ -271,12 +271,13 @@
       display: block;
     }
 
+    /* --- Button-Leiste mit Undo in der Mitte --- */
     .buttons-row {
       display: grid;
-      grid-template-columns: 0.45fr 0.10fr 0.45fr; /* dezent schmaler Undo-Button */
+      grid-template-columns: 1fr auto 1fr;
       gap: 10px;
       margin-bottom: 18px;
-      align-items: stretch;
+      align-items: center;
     }
 
     .btn {
@@ -288,23 +289,35 @@
       cursor: pointer;
     }
 
+    .btn-main {
+      padding-inline: 8px;
+      font-size: 1.05rem;
+    }
+
     .btn-primary { background: #10b981; color: #022c22; }
     .btn-secondary { background: #f59e0b; color: #451a03; }
 
-    /* neutraler, dezenter Undo-Button */
+    /* Undo-Button in der Mitte */
     .btn-undo {
-      background: #1e293b;
-      color: #e5e7eb;
-      font-size: 1.4rem;
-      padding: 10px 0;
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      padding: 0;
+      background: #0f172a; /* wie Karten-Innenfläche / Rahmenumgebung */
+      border: 1px solid rgba(148,163,184,0.85);
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 999px;
-      border: 3px solid #4b5563;
+      color: #e5e7eb;
     }
 
-    .btn-undo.btn-undo-disabled {
+    .btn-undo svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    .btn-undo:disabled {
       opacity: 0.35;
       cursor: default;
     }
@@ -704,7 +717,7 @@
             <h3>Spielbeginn</h3>
 
             <p>Hinweis:<br>
-            Mit "Icon schließen" könnt ihr jeder Zeit aus der Spielbeschreibung raus, alles in der App probieren und wieder mit dem Icon rein zum Weiterlesen.</p>
+            Mit "Icon schließen" könnt ihr jederzeit aus der Spielbeschreibung raus, alles in der App probieren und wieder mit dem Icon rein zum Weiterlesen.</p>
 
             <p><strong>1.</strong> Alle tippen in ihrer App auf „starten“.</p>
 
@@ -810,9 +823,22 @@
   </div>
 
   <div class="buttons-row">
-    <button class="btn btn-primary" id="btnOwn">erkippt</button>
-    <button class="btn btn-undo btn-undo-disabled" id="btnUndo">↺</button>
-    <button class="btn btn-secondary" id="btnFail">nicht erkippt</button>
+    <button class="btn btn-primary btn-main" id="btnOwn">erkippt</button>
+
+    <button class="btn btn-undo" id="btnUndo" aria-label="Letzte Eingabe zurücknehmen">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M9 5H5v4M5 9a7 7 0 1 0 2-4.9"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+
+    <button class="btn btn-secondary btn-main" id="btnFail">nicht erkippt</button>
   </div>
 
   <div class="score-area">
@@ -860,6 +886,8 @@ const btnStart = document.getElementById("btnStart");
 const infoIcon = document.getElementById("infoIcon");
 const btnUndo = document.getElementById("btnUndo");
 
+btnUndo.disabled = true;
+
 const resetOverlay = document.getElementById("resetOverlay");
 const resetCancel   = document.getElementById("resetCancel");
 const resetConfirm  = document.getElementById("resetConfirm");
@@ -887,32 +915,6 @@ function openRulesScroll() {
 
 function openRulesPdf() {
   window.open('KIPP_Smiley_Spielanleitung.PDF?v=2', '_blank');
-}
-
-/* Undo-Unterstützung */
-function updateUndoButton() {
-  if (!btnUndo) return;
-  if (canUndo && lastState) {
-    btnUndo.disabled = false;
-    btnUndo.classList.remove("btn-undo-disabled");
-  } else {
-    btnUndo.disabled = true;
-    btnUndo.classList.add("btn-undo-disabled");
-  }
-}
-
-function saveLastState() {
-  lastState = {
-    points,
-    moves,
-    face: faceEl.textContent,
-    hand: handEl.textContent,
-    gameStarted,
-    kippStopp,
-    rulesVisible
-  };
-  canUndo = true;
-  updateUndoButton();
 }
 
 /* Hilfsfunktionen */
@@ -967,6 +969,68 @@ function showKippStopp() {
   comboRow.style.display = "flex";
   cardMessage.innerHTML = `<div class="kippstopp-title">KIPP STOPP</div>`;
 }
+
+/* --- Undo: Zustand vor dem Klick sichern & wiederherstellen --- */
+function snapshotState() {
+  if (!gameStarted || rulesVisible || isSetzeAusPhase) return;
+
+  lastState = {
+    points,
+    moves,
+    headClicked,
+    handClicked,
+    faceText: faceEl.textContent,
+    handText: handEl.textContent
+  };
+
+  canUndo = true;
+  btnUndo.disabled = false;
+}
+
+function restoreLastState() {
+  if (!canUndo || !lastState) return;
+
+  if (pointsTimeout) {
+    clearTimeout(pointsTimeout);
+    pointsTimeout = null;
+  }
+
+  points       = lastState.points;
+  moves        = lastState.moves;
+  headClicked  = lastState.headClicked;
+  handClicked  = lastState.handClicked;
+  kippStopp    = false;
+  isSetzeAusPhase = false;
+
+  pointsDisplay.textContent = points;
+  updateMoves();
+
+  faceEl.textContent = lastState.faceText;
+  handEl.textContent = lastState.handText;
+  applyHandRotation(handEl);
+
+  comboRow.style.display = "flex";
+  cardMessage.innerHTML = "";
+  cardMessage.style.display = "block";
+
+  faceEl.classList.remove("selected","fade-out");
+  handEl.classList.remove("selected","fade-out");
+  if (headClicked) faceEl.classList.add("selected");
+  if (handClicked) handEl.classList.add("selected");
+
+  pointsPopup.classList.remove("visible","setze-aus");
+  pointsPopup.innerHTML = "";
+  pointsPopup.style.display = "flex";
+
+  canUndo = false;
+  lastState = null;
+  btnUndo.disabled = true;
+}
+
+btnUndo.onclick = () => {
+  if (!gameStarted || rulesVisible) return;
+  restoreLastState();
+};
 
 /* Punkte-Popup allgemein + „setze aus!“ Vollfläche */
 function showPointsPopup(value, {
@@ -1028,7 +1092,7 @@ function checkSetzeAus() {
   if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (!(headClicked && handClicked)) return;
 
-  saveLastState();
+  snapshotState();
 
   isSetzeAusPhase = true;
   moves += 1;
@@ -1100,21 +1164,22 @@ function startGame() {
   pointsDisplay.textContent = "0";
   updateMoves();
 
+  lastState = null;
+  canUndo = false;
+  btnUndo.disabled = true;
+
   clearSelections();
   comboRow.style.display = "flex";
   cardMessage.innerHTML = "";
+  cardMessage.style.display = "block";
   pointsPopup.style.display = "flex";
   pointsPopup.classList.remove("visible","setze-aus");
   pointsPopup.innerHTML = "";
 
+  showNormalCombo();
+
   btnStart.textContent = "Reset";
   btnStart.classList.add("reset-mode");
-
-  lastState = null;
-  canUndo = false;
-  updateUndoButton();
-
-  showNormalCombo();
 }
 
 btnStart.onclick = () => {
@@ -1151,6 +1216,10 @@ resetConfirm.onclick = () => {
   selectedHand = null;
   clearHandOverlaySelection();
 
+  lastState = null;
+  canUndo = false;
+  btnUndo.disabled = true;
+
   clearSelections();
   handEl.style.display = "inline-block";
   applyHandRotation(handEl);
@@ -1162,8 +1231,7 @@ resetConfirm.onclick = () => {
     clearTimeout(pointsTimeout);
     pointsTimeout = null;
   }
-  pointsPopup.classList.remove("visible");
-  pointsPopup.classList.remove("setze-aus");
+  pointsPopup.classList.remove("visible","setze-aus");
   pointsPopup.innerHTML = "";
   pointsPopup.style.display = "flex";
 
@@ -1173,10 +1241,6 @@ resetConfirm.onclick = () => {
 
   btnStart.textContent = "starten";
   btnStart.classList.remove("reset-mode");
-
-  lastState = null;
-  canUndo = false;
-  updateUndoButton();
 };
 
 /* schließen-Button */
@@ -1214,7 +1278,7 @@ document.getElementById("btnOwn").onclick = () => {
   if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (moves >= maxMoves) return;
 
-  saveLastState();
+  snapshotState();
 
   let addPoints = 0;
   let subText = null;
@@ -1259,7 +1323,7 @@ document.getElementById("btnFail").onclick = () => {
   if (!gameStarted || rulesVisible || kippStopp || isSetzeAusPhase) return;
   if (moves >= maxMoves) return;
 
-  saveLastState();
+  snapshotState();
 
   moves += 1;
   updateMoves();
@@ -1272,59 +1336,6 @@ document.getElementById("btnFail").onclick = () => {
     subText: null,
     changeFaceAfter: false
   });
-};
-
-/* Undo-Button */
-btnUndo.onclick = () => {
-  if (!canUndo || !lastState) return;
-
-  if (pointsTimeout) {
-    clearTimeout(pointsTimeout);
-    pointsTimeout = null;
-  }
-
-  points = lastState.points;
-  pointsDisplay.textContent = points;
-  moves = lastState.moves;
-  updateMoves();
-  gameStarted = lastState.gameStarted;
-  kippStopp = lastState.kippStopp;
-  rulesVisible = lastState.rulesVisible;
-  isSetzeAusPhase = false;
-
-  pointsPopup.classList.remove("visible","setze-aus");
-  pointsPopup.innerHTML = "";
-  pointsPopup.style.display = "flex";
-
-  clearSelections();
-
-  faceEl.textContent = lastState.face;
-  faceEl.style.fontSize = "5.2rem";
-  handEl.textContent = lastState.hand;
-  applyHandRotation(handEl);
-
-  if (rulesVisible) {
-    rulesContainer.style.display = "block";
-    comboRow.style.display = "none";
-    cardMessage.style.display = "none";
-    infoIcon.classList.add("show-close");
-  } else if (gameStarted) {
-    rulesContainer.style.display = "none";
-    comboRow.style.display = "flex";
-    cardMessage.innerHTML = "";
-    cardMessage.style.display = "block";
-    infoIcon.classList.remove("show-close");
-  } else {
-    rulesContainer.style.display = "none";
-    comboRow.style.display = "none";
-    cardMessage.innerHTML =
-      "📙 = Scrollbare Spielanleitung.<br><br>☰ = PDF-Spielanleitung herunterladen.";
-    cardMessage.style.display = "block";
-    infoIcon.classList.remove("show-close");
-  }
-
-  canUndo = false;
-  updateUndoButton();
 };
 
 /* Spielanleitung im Kombifeld ein-/ausblenden */
@@ -1355,9 +1366,6 @@ infoIcon.onclick = () => {
     }
   }
 };
-
-/* initialer Undo-Status */
-updateUndoButton();
 </script>
 
 </body>
