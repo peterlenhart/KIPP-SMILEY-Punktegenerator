@@ -115,7 +115,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       padding: 10px;
       text-align: center;
       overflow: hidden;
@@ -155,7 +155,7 @@
     }
 
     .card-message {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 700;
       opacity: 0.95;
       color: #f8fafc;
@@ -163,8 +163,16 @@
       padding: 0 6px;
     }
 
+    /* NEU: Überschrift-Stil für "Ausgangslage prüfen" */
+    .card-message-heading {
+      display: block;
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
     .points-popup {
-      min-height: 40px;
+      min-height: 0;       /* vorher 40px – jetzt kein unnötiger Abstand */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -844,7 +852,7 @@ function startNewTurn() {
   showNormalCombo();
 
   cardMessage.innerHTML =
-    'Ausgangslage prüfen<br>' +
+    '<span class="card-message-heading">Ausgangslage prüfen</span>' +
     'Smiley am Würfel sichtbar? Klicke "ja" oder "nein".';
 
   setButtonsYesNo();
@@ -884,6 +892,7 @@ function showPointsPopup(value, {
 
   const isSetzeAus = (subText === "kippen entfällt!");
 
+  pointsPopup.style.display = "flex";   // sicherstellen, dass sichtbar
   pointsPopup.innerHTML =
     `<div class="points-number">${value}</div>
      <div class="points-label">Punkte</div>` +
